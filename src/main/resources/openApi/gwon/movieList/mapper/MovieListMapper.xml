@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="openApi.gwon.movieList.mapper.MovieListMapper">
+
+    <select id="findByCd" resultType="openApi.gwon.movieList.MovieListDto">
+        SELECT *
+        FROM MovieList
+        WHERE MOVIECD = #{movieCd}
+    </select>
+
+</mapper>
