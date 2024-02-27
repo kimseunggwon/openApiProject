@@ -2,12 +2,12 @@ package openApi.gwon.movieList.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import openApi.gwon.movieList.MovieListDto;
+import openApi.gwon.movieList.dto.MovieListDto;
+import openApi.gwon.movieList.dto.MovieListResponse;
+import openApi.gwon.movieList.dto.MovieListResult;
 import openApi.gwon.movieList.service.MovieApiGetService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -22,6 +22,10 @@ public class MovieApiController {
         return movieApiGetService.findByCd(movieCd);
     }
 
+    @GetMapping("/search/{movieNm}")
+    public MovieListResponse searchMovieByName(@PathVariable String movieNm) {
 
+        return movieApiGetService.callMovieApi(movieNm);
+    }
 
 }

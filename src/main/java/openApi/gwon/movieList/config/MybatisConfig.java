@@ -1,11 +1,18 @@
 package openApi.gwon.movieList.config;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @MapperScan("openApi.gwon.movieList.mapper")
 public class MybatisConfig {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
 }
 

@@ -1,7 +1,9 @@
-package openApi.gwon.movieList;
+package openApi.gwon.movieList.dto;
 
 
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class MovieListDto {
@@ -23,5 +25,7 @@ public class MovieListDto {
     private String companyCd;
     private String companyNm;
 
+    private List<Directors> directorsList;
 
+    private List<Company> companyList;
 }
