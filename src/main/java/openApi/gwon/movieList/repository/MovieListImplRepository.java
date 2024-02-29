@@ -1,7 +1,7 @@
 package openApi.gwon.movieList.repository;
 
 import lombok.RequiredArgsConstructor;
-import openApi.gwon.movieList.dto.MovieListDto;
+import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 
 import openApi.gwon.movieList.mapper.MovieListMapper;
 import org.springframework.stereotype.Repository;

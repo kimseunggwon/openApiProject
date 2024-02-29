@@ -1,4 +1,4 @@
-package openApi.gwon.movieList.dto;
+package openApi.gwon.movieList.dto.MovieList;
 
 
 import lombok.Data;
@@ -19,13 +19,11 @@ public class MovieListDto {
     private String genreAlt;
     private String repNationNm;
     private String repGenreNm;
-    private String directors;
-    private String peopleNm;
-    private String companys;
-    private String companyCd;
-    private String companyNm;
-
+    //private String directors;
+    //private String peopleNm;
+    //private String companys;
+    //private String companyCd;
+    //private String companyNm;
     private List<Directors> directorsList;
-
     private List<Company> companyList;
 }

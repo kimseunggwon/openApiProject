@@ -1,6 +1,6 @@
 package openApi.gwon.movieList.mapper;
 
-import openApi.gwon.movieList.dto.MovieListDto;
+import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 

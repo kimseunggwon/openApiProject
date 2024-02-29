@@ -1,6 +1,6 @@
 package openApi.gwon.movieList.repository;
 
-import openApi.gwon.movieList.dto.MovieListDto;
+import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 
 
 public interface MovieListRepository {
