@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class MovieListDto {
-
+    private String movieListId;
     private String movieCd;
     private String movieNm;
     private String movieNmEn;
@@ -19,11 +19,6 @@ public class MovieListDto {
     private String genreAlt;
     private String repNationNm;
     private String repGenreNm;
-    //private String directors;
-    //private String peopleNm;
-    //private String companys;
-    //private String companyCd;
-    //private String companyNm;
     private List<Directors> directorsList;
     private List<Company> companyList;
 }
