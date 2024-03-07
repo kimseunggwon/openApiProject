@@ -19,8 +19,8 @@ public class MovieListDto {
     private String genreAlt;
     private String repNationNm;
     private String repGenreNm;
-    private List<Directors> directorsList;
-    private List<Company> companyList;
-
     private Integer totCnt;
+    private String directorsJson; // JSON 문자열로 변환된 감독 리스트
+    private String companiesJson; // JSON 문자열로 변환된 회사 리스트
+
 }

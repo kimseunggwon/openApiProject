@@ -44,6 +44,12 @@ public class MovieApiController {
         return movieApiGetService.saveMovieApi(movieNm);
     }
 
+    @GetMapping("/findAll")
+    public List<MovieListDto> findAll() {
+
+        return movieApiGetService.findAllMovies();
+    }
+
 
 
 }

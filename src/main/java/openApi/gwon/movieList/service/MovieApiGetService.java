@@ -31,7 +31,6 @@ public class MovieApiGetService {
 
     private final MovieListImplRepository movieListImplRepository;
     private final RestTemplate restTemplate;
-
     private final ObjectMapper objectMapper;
 
     public MovieListDto findByCd(String movieCd) {
@@ -97,24 +96,10 @@ public class MovieApiGetService {
                     movieDto.setRepGenreNm((String) movie.get("repGenreNm"));
                     movieDto.setTotCnt(totCnt);
 
-                    List<HashMap<String,Object>> directors = (List<HashMap<String, Object>>) movie.getOrDefault("directors",new ArrayList<>());
-                    List<Directors> directorsList = new ArrayList<>();
-                    for (HashMap<String, Object> director : directors) {
-                        Directors directorsDto = new Directors();
-                        directorsDto.setPeopleNm((String) director.get("peopleNm"));
-                        directorsList.add(directorsDto);
-                    }
-                    movieDto.setDirectorsList(directorsList);
-
-                    List<HashMap<String, Object>> companies = (List<HashMap<String, Object>>) movie.getOrDefault("companys", new ArrayList<>());
-                    List<Company> companyList = new ArrayList<>();
-                    for (HashMap<String, Object> company : companies) {
-                        Company companyDto = new Company();
-                        companyDto.setCompanyCd((String) company.get("companyCd"));
-                        companyDto.setCompanyNm((String) company.get("companyNm"));
-                        companyList.add(companyDto);
-                    }
-                    movieDto.setCompanyList(companyList);
+                    String directorsJson = objectMapper.writeValueAsString(movie.get("directors"));
+                    String companiesJson = objectMapper.writeValueAsString(movie.get("companys"));
+                    movieDto.setDirectorsJson(directorsJson);
+                    movieDto.setCompaniesJson(companiesJson);
 
                     movieListDtos.add(movieDto);
                 }

@@ -26,14 +26,14 @@
         INSERT INTO MovieList (
         movieListId, movieCd, movieNm, movieNmEn, prdtYear,
         openDt, typeNm, prdtStatNm, nationAlt, genreAlt,
-        repNationNm, repGenreNm, directorsList, companyList
+        repNationNm, repGenreNm, directors, companys
         )
         VALUES
         <foreach collection="list" item="movie" separator=",">
             (
             #{movie.movieListId}, #{movie.movieCd}, #{movie.movieNm}, #{movie.movieNmEn}, #{movie.prdtYear},
             #{movie.openDt}, #{movie.typeNm}, #{movie.prdtStatNm}, #{movie.nationAlt}, #{movie.genreAlt},
-            #{movie.repNationNm}, #{movie.repGenreNm}, #{movie.directorsList}, #{movie.companyList}
+            #{movie.repNationNm}, #{movie.repGenreNm}, #{movie.directorsJson}, #{movie.companiesJson}
             )
         </foreach>
     </insert>
