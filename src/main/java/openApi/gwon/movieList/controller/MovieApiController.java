@@ -38,6 +38,12 @@ public class MovieApiController {
         return movieApiGetService.callDailyBoxOfficeApi(targetDt);
     }
 
+    @GetMapping("/saveMovieApi")
+    public List<MovieListDto> saveMovieApi(@RequestParam String movieNm) throws Exception {
+
+        return movieApiGetService.saveMovieApi(movieNm);
+    }
+
 
 
 }

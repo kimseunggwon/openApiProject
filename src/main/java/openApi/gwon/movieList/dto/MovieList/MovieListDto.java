@@ -21,4 +21,6 @@ public class MovieListDto {
     private String repGenreNm;
     private List<Directors> directorsList;
     private List<Company> companyList;
+
+    private Integer totCnt;
 }

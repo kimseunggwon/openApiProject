@@ -11,4 +11,32 @@
         WHERE MOVIECD = #{movieCd}
     </select>
 
+    <select id="findAll" parameterType="string" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
+        SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
+        FROM MovieList
+    </select>
+
+    <select id="findByMovieCd" parameterType="string" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
+        SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
+        FROM MovieList
+        WHERE movieNm = #{movieNm}
+    </select>
+
+    <insert id="insertMovies">
+        INSERT INTO MovieList (
+        movieListId, movieCd, movieNm, movieNmEn, prdtYear,
+        openDt, typeNm, prdtStatNm, nationAlt, genreAlt,
+        repNationNm, repGenreNm, directorsList, companyList
+        )
+        VALUES
+        <foreach collection="list" item="movie" separator=",">
+            (
+            #{movie.movieListId}, #{movie.movieCd}, #{movie.movieNm}, #{movie.movieNmEn}, #{movie.prdtYear},
+            #{movie.openDt}, #{movie.typeNm}, #{movie.prdtStatNm}, #{movie.nationAlt}, #{movie.genreAlt},
+            #{movie.repNationNm}, #{movie.repGenreNm}, #{movie.directorsList}, #{movie.companyList}
+            )
+        </foreach>
+    </insert>
+
+
 </mapper>

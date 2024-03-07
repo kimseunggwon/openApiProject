@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
 import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeResponse;
+import openApi.gwon.movieList.dto.MovieList.Company;
 import openApi.gwon.movieList.dto.MovieList.Directors;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
@@ -37,6 +38,19 @@ public class MovieApiGetService {
         return movieListImplRepository.findByCd(movieCd);
     }
 
+    public List<MovieListDto> findAllMovies() {
+        return movieListImplRepository.findAll();
+    }
+
+    public List<MovieListDto> saveMovieApi(String movieNm) throws Exception{
+        List<MovieListDto> movieListDtos = callMovieApi(movieNm);
+
+        int insertMoive = movieListImplRepository.insertMovies(movieListDtos);
+        log.info("{} rows inserted into database", insertMoive);
+        return movieListDtos;
+    }
+
+
     /**
      * 영화목록 조회 API 서비스
      * @param movieNm
@@ -45,14 +59,14 @@ public class MovieApiGetService {
      */
     public List<MovieListDto> callMovieApi(String movieNm) throws Exception{
 
-        //String url = OpenApiConstants.API_URL_MOVIE_LIST + "?key=" + OpenApiConstants.API_KEY_MOVIE_LIST + "&movieNm=" + movieNm;
-        //log.info("MOVIE_LIST url = " + url);
-
-        String url = UriComponentsBuilder.fromHttpUrl(OpenApiConstants.API_URL_MOVIE_LIST)
-                .queryParam("key", OpenApiConstants.API_KEY_LIST)
-                .queryParam("&movieNm", movieNm)
-                .toUriString();
+        String url = OpenApiConstants.API_URL_MOVIE_LIST + "?key=" + OpenApiConstants.API_KEY_LIST + "&movieNm=" + movieNm;
         log.info("MOVIE_LIST url = " + url);
+
+        // UriComponentsBuilder 클래스 자동인코딩 이슈로 보류
+        /* String url = UriComponentsBuilder.fromHttpUrl(OpenApiConstants.API_URL_MOVIE_LIST)
+                .queryParam("key", OpenApiConstants.API_KEY_LIST)
+                .queryParam("movieNm", movieNm)
+                .toUriString();*/
 
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         log.info("reponse =  " + response);
@@ -62,6 +76,8 @@ public class MovieApiGetService {
 
                 HashMap<String, Object> resultMap = objectMapper.readValue(responseBody,HashMap.class);
                 HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
+                log.info("totCnt " +  movieListResult.get("totCnt"));
+                Integer totCnt = (Integer) movieListResult.get("totCnt");
                 List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) movieListResult.get("movieList");
 
                 List<MovieListDto> movieListDtos = new ArrayList<>();
@@ -79,6 +95,7 @@ public class MovieApiGetService {
                     movieDto.setGenreAlt((String) movie.get("genreAlt"));
                     movieDto.setRepNationNm((String) movie.get("repNationNm"));
                     movieDto.setRepGenreNm((String) movie.get("repGenreNm"));
+                    movieDto.setTotCnt(totCnt);
 
                     List<HashMap<String,Object>> directors = (List<HashMap<String, Object>>) movie.getOrDefault("directors",new ArrayList<>());
                     List<Directors> directorsList = new ArrayList<>();
@@ -89,7 +106,15 @@ public class MovieApiGetService {
                     }
                     movieDto.setDirectorsList(directorsList);
 
-
+                    List<HashMap<String, Object>> companies = (List<HashMap<String, Object>>) movie.getOrDefault("companys", new ArrayList<>());
+                    List<Company> companyList = new ArrayList<>();
+                    for (HashMap<String, Object> company : companies) {
+                        Company companyDto = new Company();
+                        companyDto.setCompanyCd((String) company.get("companyCd"));
+                        companyDto.setCompanyNm((String) company.get("companyNm"));
+                        companyList.add(companyDto);
+                    }
+                    movieDto.setCompanyList(companyList);
 
                     movieListDtos.add(movieDto);
                 }
