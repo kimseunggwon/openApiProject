@@ -1,3 +1,4 @@
+/*
 package openApi.gwon.movieList.dto.DailyBoxOfficeList;
 
 import lombok.Data;
@@ -7,3 +8,4 @@ public class DailyBoxOfficeResponse {
 
     private BoxOfficeResult boxOfficeResult;
 }
+*/

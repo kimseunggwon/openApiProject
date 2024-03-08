@@ -6,22 +6,25 @@ import lombok.Data;
 @Data
 public class DailyBoxOfficeListDto {
 
+    // NumberFormatException -> integer to -> Long
+
+    private String dailyBoxOfficeId;
     private String rnum;
     private String rank;
     private String rankInten;
-    private String rankOldAndNew;
+    private String rankOldAndNew; // “OLD” : 기존 , “NEW” : 신규
     private String movieCd;
     private String movieNm;
     private String openDt;
-    private String salesAmt;
+    private Long salesAmt;
     private String salesShare;
-    private String salesInten;
+    private Long salesInten;
     private String salesChange;
-    private String salesAcc;
-    private String audiCnt;
-    private String audiInten;
+    private Long salesAcc;
+    private Long audiCnt;
+    private Long audiInten;
     private String audiChange;
-    private String audiAcc;
-    private String scrnCnt;
-    private String showCnt;
+    private Long audiAcc;
+    private Long scrnCnt;
+    private Long showCnt;
 }

@@ -1,3 +1,4 @@
+/*
 package openApi.gwon.movieList.dto.DailyBoxOfficeList;
 
 
@@ -15,3 +16,4 @@ public class BoxOfficeResult {
 
 
 
+*/

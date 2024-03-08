@@ -1,13 +1,13 @@
 package openApi.gwon.movieList.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
-import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeResponse;
-import openApi.gwon.movieList.dto.MovieList.Company;
-import openApi.gwon.movieList.dto.MovieList.Directors;
+import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.http.HttpStatus;
@@ -19,10 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -110,26 +107,66 @@ public class MovieApiGetService {
         }
     }
 
-    public DailyBoxOfficeResponse callDailyBoxOfficeApi(String targetDt) {
+    /**
+     * 일별 박스오피스 API 서비스
+     * @param targetDt
+     * @return
+     */
+    public List<DailyBoxOfficeListDto> callDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
 
         String url = OpenApiConstants.API_URL_DAILY_BOX_OFFICE + "?key=" + OpenApiConstants.API_KEY_LIST + "&targetDt=" + targetDt;
-        log.info("DAILY_BOX_OFFICE url  = " + url);
+        /*String url = UriComponentsBuilder.fromHttpUrl(OpenApiConstants.API_URL_DAILY_BOX_OFFICE)
+                .queryParam("?key", OpenApiConstants.API_KEY_LIST)
+                .queryParam("&targetDt=", targetDt)
+                .toUriString();
+        log.info("DAILY_BOX_OFFICE url  = " + url);*/
 
 
+        //ResponseEntity<DailyBoxOfficeResponse> responseDailyBoxOffice = restTemplate.getForEntity(url, DailyBoxOfficeResponse.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        log.info("responseDailyBoxOffice = " + response);
 
-        ResponseEntity<DailyBoxOfficeResponse> responseDailyBoxOffice = restTemplate.getForEntity(url, DailyBoxOfficeResponse.class);
-        log.info("responseDailyBoxOffice = " + responseDailyBoxOffice);
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            String responseBody = response.getBody();
+            ObjectMapper objectMapper = new ObjectMapper();
 
-        if (responseDailyBoxOffice.getStatusCode() == HttpStatus.OK && responseDailyBoxOffice.getBody() != null) {
-            DailyBoxOfficeResponse dailyBoxOfficeResponse = responseDailyBoxOffice.getBody();
-            log.info("BoxofficeType = {} ",dailyBoxOfficeResponse.getBoxOfficeResult().getBoxofficeType());
-            log.info("DailyBoxOfficeList = {} ",dailyBoxOfficeResponse.getBoxOfficeResult().getDailyBoxOfficeList());
-            log.info("ShowRange = {} ",dailyBoxOfficeResponse.getBoxOfficeResult().getShowRange());
+            // TypeReference :
+            Map<String,Object> resultMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+            Map<String,Object> boxOfficeResult = (Map<String, Object>) resultMap.get("boxOfficeResult");
+            // list Map
+            List<Map<String,Object>> dailyBoxOfficeList = (List<Map<String, Object>>) boxOfficeResult.get("dailyBoxOfficeList");
 
-            return dailyBoxOfficeResponse;
+            List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = new ArrayList<>();
+            for (Map<String,Object> dailyBoxOffice: dailyBoxOfficeList) {
+                DailyBoxOfficeListDto dto = new DailyBoxOfficeListDto();
+                dto.setDailyBoxOfficeId(UUID.randomUUID().toString()); // Assuming we're generating a new ID
+                dto.setRnum((String) dailyBoxOffice.get("rnum"));
+                dto.setRank((String) dailyBoxOffice.get("rank"));
+                dto.setRankInten((String) dailyBoxOffice.get("rankInten"));
+                dto.setRankOldAndNew((String) dailyBoxOffice.get("rankOldAndNew"));
+                dto.setMovieCd((String) dailyBoxOffice.get("movieCd"));
+                dto.setMovieNm((String) dailyBoxOffice.get("movieNm"));
+                dto.setOpenDt((String) dailyBoxOffice.get("openDt"));
+               /* dto.setSalesAmt((long) Integer.parseInt((String) dailyBoxOffice.get("salesAmt")));*/
+                dto.setSalesAmt(Long.parseLong((String) dailyBoxOffice.get("salesAmt")));
+                dto.setSalesShare((String) dailyBoxOffice.get("salesShare"));
+                dto.setSalesInten(Long.parseLong((String) dailyBoxOffice.get("salesInten")));
+                dto.setSalesChange((String) dailyBoxOffice.get("salesChange"));
+                dto.setSalesAcc(Long.parseLong((String) dailyBoxOffice.get("salesAcc")));
+                dto.setAudiCnt(Long.parseLong((String) dailyBoxOffice.get("audiCnt")));
+                dto.setAudiInten(Long.parseLong((String) dailyBoxOffice.get("audiInten")));
+                dto.setAudiChange((String) dailyBoxOffice.get("audiChange"));
+                dto.setAudiAcc(Long.parseLong((String) dailyBoxOffice.get("audiAcc")));
+                dto.setScrnCnt(Long.parseLong((String) dailyBoxOffice.get("scrnCnt")));
+                dto.setShowCnt(Long.parseLong((String) dailyBoxOffice.get("showCnt")));
+
+                dailyBoxOfficeListDtos.add(dto);
+            }
+
+            return dailyBoxOfficeListDtos;
         } else {
-            log.error("Error calling DailyBoxOfficeResponse API: {}", responseDailyBoxOffice.getStatusCode());
-            return null;
+            log.error("Error calling Daily Box Office API: {}", response.getStatusCode());
+            throw new RuntimeException("Error calling Daily Box Office API");
         }
 
     }

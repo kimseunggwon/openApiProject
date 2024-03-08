@@ -1,9 +1,10 @@
 package openApi.gwon.movieList.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeResponse;
+import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import openApi.gwon.movieList.service.MovieApiGetService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,7 @@ public class MovieApiController {
     }
 
     @GetMapping("/search/dailyBoxOffice")
-    public DailyBoxOfficeResponse searchDailyBoxOffice(@RequestParam String targetDt) {
+    public List<DailyBoxOfficeListDto> searchDailyBoxOffice(@RequestParam String targetDt) throws JsonProcessingException {
 
         return movieApiGetService.callDailyBoxOfficeApi(targetDt);
     }
