@@ -35,15 +35,29 @@ public class MovieApiGetService {
     }
 
     public List<MovieListDto> findAllMovies() {
+
+        int countMovies = movieListImplRepository.countAllMovies();
+        log.info("countMovies = "+ countMovies);
+
         return movieListImplRepository.findAll();
     }
 
     public List<MovieListDto> saveMovieApi(String movieNm) throws Exception{
         List<MovieListDto> movieListDtos = callMovieApi(movieNm);
 
+        int countMovies = movieListImplRepository.countAllMovies();
+        log.info("countMovies = "+ countMovies);
+
         int insertMoive = movieListImplRepository.insertMovies(movieListDtos);
         log.info("{} rows inserted into database", insertMoive);
         return movieListDtos;
+    }
+
+    public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
+
+        List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = callDailyBoxOfficeApi(targetDt);
+
+        return dailyBoxOfficeListDtos;
     }
 
 
@@ -55,7 +69,8 @@ public class MovieApiGetService {
      */
     public List<MovieListDto> callMovieApi(String movieNm) throws Exception{
 
-        String url = OpenApiConstants.API_URL_MOVIE_LIST + "?key=" + OpenApiConstants.API_KEY_LIST + "&movieNm=" + movieNm;
+        // itemPerPage= 페이지네이션 지정
+        String url = OpenApiConstants.API_URL_MOVIE_LIST + "?key=" + OpenApiConstants.API_KEY_LIST + "&movieNm=" + movieNm +"&itemPerPage=20";
         log.info("MOVIE_LIST url = " + url);
 
         // UriComponentsBuilder 클래스 자동인코딩 이슈로 보류
@@ -67,12 +82,15 @@ public class MovieApiGetService {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         log.info("reponse =  " + response);
 
+        int countMovies = movieListImplRepository.countAllMovies();
+        log.info("countMovies = "+ countMovies);
+
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null){
             String responseBody = response.getBody();
 
                 HashMap<String, Object> resultMap = objectMapper.readValue(responseBody,HashMap.class);
                 HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
-                log.info("totCnt " +  movieListResult.get("totCnt"));
+                log.info("totCnt = " +  movieListResult.get("totCnt"));
                 Integer totCnt = (Integer) movieListResult.get("totCnt");
                 List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) movieListResult.get("movieList");
 
@@ -120,7 +138,6 @@ public class MovieApiGetService {
                 .queryParam("&targetDt=", targetDt)
                 .toUriString();
         log.info("DAILY_BOX_OFFICE url  = " + url);*/
-
 
         //ResponseEntity<DailyBoxOfficeResponse> responseDailyBoxOffice = restTemplate.getForEntity(url, DailyBoxOfficeResponse.class);
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);

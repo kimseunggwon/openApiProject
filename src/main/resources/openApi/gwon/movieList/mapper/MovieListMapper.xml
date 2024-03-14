@@ -38,5 +38,24 @@
         </foreach>
     </insert>
 
+    <select id="countAllMovies" resultType="int">
+        SELECT COUNT(*) FROM MovieList
+
+    </select>
+
+    <insert id="insertDailyBoxOffice">
+        INSERT INTO DailyBoxOffice (
+            dailyBoxOfficeId, rnum, rank, rankInten, rankOldAndNew,
+            movieCd, movieNm, openDt, salesAmt, salesShare,
+            salesInten, salesChange, salesAcc, audiCnt, audiInten,
+            audiChange, audiAcc, scrnCnt, showCnt
+        ) VALUES (
+             #{dailyBoxOfficeId}, #{rnum}, #{rank}, #{rankInten}, #{rankOldAndNew},
+             #{movieCd}, #{movieNm}, #{openDt}, #{salesAmt}, #{salesShare},
+             #{salesInten}, #{salesChange}, #{salesAcc}, #{audiCnt}, #{audiInten},
+             #{audiChange}, #{audiAcc}, #{scrnCnt}, #{showCnt}
+                 )
+    </insert>
+
 
 </mapper>

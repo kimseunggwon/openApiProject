@@ -1,5 +1,6 @@
 package openApi.gwon.movieList.mapper;
 
+import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
@@ -18,5 +19,8 @@ public interface MovieListMapper {
 
     int insertMovies(List<MovieListDto> movies);
 
+    int countAllMovies();
+
+    int insertDailyBoxOffice(DailyBoxOfficeListDto dailyBoxOffice);
 
 }

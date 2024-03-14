@@ -1,6 +1,7 @@
 package openApi.gwon.movieList.repository;
 
 import lombok.RequiredArgsConstructor;
+import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 
 import openApi.gwon.movieList.mapper.MovieListMapper;
@@ -32,5 +33,15 @@ public class MovieListImplRepository implements MovieListRepository {
     @Override
     public int insertMovies(List<MovieListDto> movies) {
         return movieListMapper.insertMovies(movies);
+    }
+
+    @Override
+    public int countAllMovies() {
+        return movieListMapper.countAllMovies();
+    }
+
+    @Override
+    public int insertDailyBoxOffice(DailyBoxOfficeListDto dailyBoxOffice) {
+        return movieListMapper.insertDailyBoxOffice(dailyBoxOffice);
     }
 }

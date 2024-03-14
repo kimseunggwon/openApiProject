@@ -39,6 +39,7 @@ public class MovieApiController {
         return movieApiGetService.callDailyBoxOfficeApi(targetDt);
     }
 
+
     @GetMapping("/saveMovieApi")
     public List<MovieListDto> saveMovieApi(@RequestParam String movieNm) throws Exception {
 
@@ -49,6 +50,12 @@ public class MovieApiController {
     public List<MovieListDto> findAll() {
 
         return movieApiGetService.findAllMovies();
+    }
+
+    @GetMapping("/saveBoxOfficeApi")
+    public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(@RequestParam String targetDt) throws JsonProcessingException{
+
+        return movieApiGetService.saveDailyBoxOfficeApi(targetDt);
     }
 
 
