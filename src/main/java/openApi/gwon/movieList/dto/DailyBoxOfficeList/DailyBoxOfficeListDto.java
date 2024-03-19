@@ -16,15 +16,17 @@ public class DailyBoxOfficeListDto {
     private String movieCd;
     private String movieNm;
     private String openDt;
-    private Long salesAmt;
+    private String salesAmt;
     private String salesShare;
-    private Long salesInten;
+    private String salesInten;
     private String salesChange;
-    private Long salesAcc;
-    private Long audiCnt;
-    private Long audiInten;
+    private String salesAcc;
+    private String audiCnt;
+    private String audiInten;
     private String audiChange;
-    private Long audiAcc;
-    private Long scrnCnt;
-    private Long showCnt;
+    private String audiAcc;
+    private String scrnCnt;
+    private String showCnt;
+
+
 }

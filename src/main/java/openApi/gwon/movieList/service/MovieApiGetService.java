@@ -54,8 +54,10 @@ public class MovieApiGetService {
     }
 
     public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
-
         List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = callDailyBoxOfficeApi(targetDt);
+
+        int insertDailyBoxOfiice = movieListImplRepository.insertDailyBoxOffice(dailyBoxOfficeListDtos);
+        log.info("{} rows inserted into database", insertDailyBoxOfiice);
 
         return dailyBoxOfficeListDtos;
     }
@@ -156,7 +158,7 @@ public class MovieApiGetService {
             List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = new ArrayList<>();
             for (Map<String,Object> dailyBoxOffice: dailyBoxOfficeList) {
                 DailyBoxOfficeListDto dto = new DailyBoxOfficeListDto();
-                dto.setDailyBoxOfficeId(UUID.randomUUID().toString()); // Assuming we're generating a new ID
+                dto.setDailyBoxOfficeId(UUID.randomUUID().toString());
                 dto.setRnum((String) dailyBoxOffice.get("rnum"));
                 dto.setRank((String) dailyBoxOffice.get("rank"));
                 dto.setRankInten((String) dailyBoxOffice.get("rankInten"));
@@ -165,17 +167,17 @@ public class MovieApiGetService {
                 dto.setMovieNm((String) dailyBoxOffice.get("movieNm"));
                 dto.setOpenDt((String) dailyBoxOffice.get("openDt"));
                /* dto.setSalesAmt((long) Integer.parseInt((String) dailyBoxOffice.get("salesAmt")));*/
-                dto.setSalesAmt(Long.parseLong((String) dailyBoxOffice.get("salesAmt")));
+                dto.setSalesAmt(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("salesAmt"))));
                 dto.setSalesShare((String) dailyBoxOffice.get("salesShare"));
-                dto.setSalesInten(Long.parseLong((String) dailyBoxOffice.get("salesInten")));
+                dto.setSalesInten(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("salesInten"))));
                 dto.setSalesChange((String) dailyBoxOffice.get("salesChange"));
-                dto.setSalesAcc(Long.parseLong((String) dailyBoxOffice.get("salesAcc")));
-                dto.setAudiCnt(Long.parseLong((String) dailyBoxOffice.get("audiCnt")));
-                dto.setAudiInten(Long.parseLong((String) dailyBoxOffice.get("audiInten")));
+                dto.setSalesAcc(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("salesAcc"))));
+                dto.setAudiCnt(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("audiCnt"))));
+                dto.setAudiInten(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("audiInten"))));
                 dto.setAudiChange((String) dailyBoxOffice.get("audiChange"));
-                dto.setAudiAcc(Long.parseLong((String) dailyBoxOffice.get("audiAcc")));
-                dto.setScrnCnt(Long.parseLong((String) dailyBoxOffice.get("scrnCnt")));
-                dto.setShowCnt(Long.parseLong((String) dailyBoxOffice.get("showCnt")));
+                dto.setAudiAcc(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("audiAcc"))));
+                dto.setScrnCnt(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("scrnCnt"))));
+                dto.setShowCnt(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("showCnt"))));
 
                 dailyBoxOfficeListDtos.add(dto);
             }

@@ -21,6 +21,6 @@ public interface MovieListMapper {
 
     int countAllMovies();
 
-    int insertDailyBoxOffice(DailyBoxOfficeListDto dailyBoxOffice);
+    int insertDailyBoxOffice(List<DailyBoxOfficeListDto> dailyBoxOffice);
 
 }

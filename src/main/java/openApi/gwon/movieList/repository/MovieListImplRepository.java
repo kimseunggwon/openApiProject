@@ -41,7 +41,7 @@ public class MovieListImplRepository implements MovieListRepository {
     }
 
     @Override
-    public int insertDailyBoxOffice(DailyBoxOfficeListDto dailyBoxOffice) {
+    public int insertDailyBoxOffice(List<DailyBoxOfficeListDto> dailyBoxOffice) {
         return movieListMapper.insertDailyBoxOffice(dailyBoxOffice);
     }
 }

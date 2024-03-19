@@ -30,11 +30,11 @@
         )
         VALUES
         <foreach collection="list" item="movie" separator=",">
-            (
-            #{movie.movieListId}, #{movie.movieCd}, #{movie.movieNm}, #{movie.movieNmEn}, #{movie.prdtYear},
-            #{movie.openDt}, #{movie.typeNm}, #{movie.prdtStatNm}, #{movie.nationAlt}, #{movie.genreAlt},
-            #{movie.repNationNm}, #{movie.repGenreNm}, #{movie.directorsJson}, #{movie.companiesJson}
-            )
+        (
+        #{movie.movieListId}, #{movie.movieCd}, #{movie.movieNm}, #{movie.movieNmEn}, #{movie.prdtYear},
+        #{movie.openDt}, #{movie.typeNm}, #{movie.prdtStatNm}, #{movie.nationAlt}, #{movie.genreAlt},
+        #{movie.repNationNm}, #{movie.repGenreNm}, #{movie.directorsJson}, #{movie.companiesJson}
+        )
         </foreach>
     </insert>
 
@@ -43,18 +43,25 @@
 
     </select>
 
-    <insert id="insertDailyBoxOffice">
+    <insert id="insertDailyBoxOffice" parameterType="list">
         INSERT INTO DailyBoxOffice (
             dailyBoxOfficeId, rnum, rank, rankInten, rankOldAndNew,
             movieCd, movieNm, openDt, salesAmt, salesShare,
             salesInten, salesChange, salesAcc, audiCnt, audiInten,
             audiChange, audiAcc, scrnCnt, showCnt
-        ) VALUES (
-             #{dailyBoxOfficeId}, #{rnum}, #{rank}, #{rankInten}, #{rankOldAndNew},
-             #{movieCd}, #{movieNm}, #{openDt}, #{salesAmt}, #{salesShare},
-             #{salesInten}, #{salesChange}, #{salesAcc}, #{audiCnt}, #{audiInten},
-             #{audiChange}, #{audiAcc}, #{scrnCnt}, #{showCnt}
-                 )
+        )
+        VALUES
+        <foreach collection="list" item="dailyBoxOffice" separator=",">
+        (
+        #{dailyBoxOffice.dailyBoxOfficeId}, #{dailyBoxOffice.rnum}, #{dailyBoxOffice.rank},
+        #{dailyBoxOffice.rankInten}, #{dailyBoxOffice.rankOldAndNew}, #{dailyBoxOffice.movieCd},
+        #{dailyBoxOffice.movieNm}, #{dailyBoxOffice.openDt}, #{dailyBoxOffice.salesAmt},
+        #{dailyBoxOffice.salesShare}, #{dailyBoxOffice.salesInten}, #{dailyBoxOffice.salesChange},
+        #{dailyBoxOffice.salesAcc}, #{dailyBoxOffice.audiCnt}, #{dailyBoxOffice.audiInten},
+        #{dailyBoxOffice.audiChange}, #{dailyBoxOffice.audiAcc}, #{dailyBoxOffice.scrnCnt},
+        #{dailyBoxOffice.showCnt}
+        )
+        </foreach>
     </insert>
 
 

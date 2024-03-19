@@ -18,7 +18,7 @@ public interface MovieListRepository {
 
     int countAllMovies();
 
-    int insertDailyBoxOffice(DailyBoxOfficeListDto dailyBoxOffice);
+    int insertDailyBoxOffice(List<DailyBoxOfficeListDto> dailyBoxOffice);
 
 }
 
