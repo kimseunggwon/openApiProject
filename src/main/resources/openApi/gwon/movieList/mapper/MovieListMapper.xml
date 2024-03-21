@@ -64,5 +64,15 @@
         </foreach>
     </insert>
 
+    <select id="findByDailyBoxOfficeDt" parameterType="string" resultType="openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto">
+        SELECT
+            dailyBoxOfficeId, rnum, rank, rankInten, rankOldAndNew,
+            movieCd, movieNm, openDt, salesAmt, salesShare,
+            salesInten, salesChange, salesAcc, audiCnt, audiInten,
+            audiChange, audiAcc, scrnCnt, showCnt
+        FROM DailyBoxOffice
+        WHERE movieNm = #{movieNm}
+    </select>
+
 
 </mapper>

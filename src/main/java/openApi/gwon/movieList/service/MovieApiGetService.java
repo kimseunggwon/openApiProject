@@ -10,6 +10,8 @@ import openApi.gwon.movieList.OpenApiConstants;
 import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
+import org.springframework.cglib.core.Local;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -42,6 +46,8 @@ public class MovieApiGetService {
         return movieListImplRepository.findAll();
     }
 
+    /** 영화목록 조회 API 서비스 저장
+     */
     public List<MovieListDto> saveMovieApi(String movieNm) throws Exception{
         List<MovieListDto> movieListDtos = callMovieApi(movieNm);
 
@@ -53,15 +59,50 @@ public class MovieApiGetService {
         return movieListDtos;
     }
 
+    /** 일별 박스오피스 API 서비스 저장
+     */
     public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
-        List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = callDailyBoxOfficeApi(targetDt);
 
-        int insertDailyBoxOfiice = movieListImplRepository.insertDailyBoxOffice(dailyBoxOfficeListDtos);
-        log.info("{} rows inserted into database", insertDailyBoxOfiice);
+        List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = null; // 변수 선언
+
+        try {
+            dailyBoxOfficeListDtos = callDailyBoxOfficeApi(targetDt);
+            log.info("targetDt a" + targetDt);
+
+            int insertDailyBoxOfiice = movieListImplRepository.insertDailyBoxOffice(dailyBoxOfficeListDtos);
+            log.info("{} rows inserted into database", insertDailyBoxOfiice);
+
+        } catch (DuplicateKeyException e) {
+            log.info("--------------------");
+            log.info("중복된 데이터 입니다");
+            log.info("--------------------");
+        }
 
         return dailyBoxOfficeListDtos;
     }
 
+    /** 20240101 ~ now
+     */
+    public void saveDailyBoxOfficeForPeriod() throws JsonProcessingException {
+        LocalDate startDate = LocalDate.of(2024,1,1);
+        LocalDate endDate = LocalDate.now();
+
+        // 설정한 기간 동안 각 날짜에 대해 반복, 루프의 각 단계에서 하루씩 날짜 증가
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)){
+            log.info("startDate " + startDate);
+            log.info("endDate " + endDate);
+            log.info("date " + date);
+            // 날짜를 yyMMdd 형식으로 포매팅
+            String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            log.info("formattedDate a" + formattedDate);
+            // 포매팅된 날짜를 사용해 API 호출 및 저장
+            List<DailyBoxOfficeListDto> result = saveDailyBoxOfficeApi(formattedDate);
+            log.info("formattedDate result " + result);
+
+            //추후 result를 이용해 추가적인 처리
+
+        }
+    }
 
     /**
      * 영화목록 조회 API 서비스

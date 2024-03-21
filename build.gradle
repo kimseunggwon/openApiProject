@@ -1,7 +1,14 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.2'
+	/*id 'org.springframework.boot' version '3.2.2'*/
+	id 'org.springframework.boot' version '3.2.1'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'war' // WAR 플러그인 추가
+}
+
+// WAR 파일 생성을 위한 설정
+bootWar {
+	enabled = true // WAR 파일 생성 활성화
 }
 
 group = 'openApi'
@@ -22,7 +29,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	compileOnly 'org.projectlombok:lombok'
@@ -31,6 +38,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	//JSP 추가 시작
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	implementation 'jakarta.servlet:jakarta.servlet-api'
+	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api'
+	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
+	// JSP 추가 끝
 
 
 }

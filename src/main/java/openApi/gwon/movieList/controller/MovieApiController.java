@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import openApi.gwon.movieList.service.MovieApiGetService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +59,17 @@ public class MovieApiController {
 
         return movieApiGetService.saveDailyBoxOfficeApi(targetDt);
     }
+
+    @GetMapping("/saveBoxOfficePeriod")
+    public ResponseEntity<?> saveBoxOfficeDataForPeriod() {
+        try {
+            movieApiGetService.saveDailyBoxOfficeForPeriod();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 
 
 
