@@ -61,12 +61,12 @@ public class MovieApiGetService {
 
     /** 일별 박스오피스 API 서비스 저장
      */
-    public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
+ /*   public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(String targetDt,int itemsPerPage) throws JsonProcessingException {
 
         List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = null; // 변수 선언
 
         try {
-            dailyBoxOfficeListDtos = callDailyBoxOfficeApi(targetDt);
+            dailyBoxOfficeListDtos = callDailyBoxOfficeApi(targetDt,itemsPerPage);
             log.info("targetDt a" + targetDt);
 
             int insertDailyBoxOfiice = movieListImplRepository.insertDailyBoxOffice(dailyBoxOfficeListDtos);
@@ -79,9 +79,9 @@ public class MovieApiGetService {
         }
 
         return dailyBoxOfficeListDtos;
-    }
+    }*/
 
-    /** 20240101 ~ now
+    /** 20240101 ~ now 원하는 날짜 저장
      */
     public void saveDailyBoxOfficeForPeriod() throws JsonProcessingException {
         LocalDate startDate = LocalDate.of(2024,1,1);
@@ -96,8 +96,8 @@ public class MovieApiGetService {
             String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             log.info("formattedDate a" + formattedDate);
             // 포매팅된 날짜를 사용해 API 호출 및 저장
-            List<DailyBoxOfficeListDto> result = saveDailyBoxOfficeApi(formattedDate);
-            log.info("formattedDate result " + result);
+            //List<DailyBoxOfficeListDto> result = saveDailyBoxOfficeApi(formattedDate);
+            //log.info("formattedDate result " + result);
 
             //추후 result를 이용해 추가적인 처리
 
@@ -113,7 +113,10 @@ public class MovieApiGetService {
     public List<MovieListDto> callMovieApi(String movieNm) throws Exception{
 
         // itemPerPage= 페이지네이션 지정
-        String url = OpenApiConstants.API_URL_MOVIE_LIST + "?key=" + OpenApiConstants.API_KEY_LIST + "&movieNm=" + movieNm +"&itemPerPage=20";
+        String url = OpenApiConstants.API_URL_MOVIE_LIST 
+                + "?key=" + OpenApiConstants.API_KEY_LIST 
+                + "&movieNm=" 
+                + movieNm +"&itemPerPage=20";
         log.info("MOVIE_LIST url = " + url);
 
         // UriComponentsBuilder 클래스 자동인코딩 이슈로 보류
@@ -175,7 +178,10 @@ public class MovieApiGetService {
      */
     public List<DailyBoxOfficeListDto> callDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
 
-        String url = OpenApiConstants.API_URL_DAILY_BOX_OFFICE + "?key=" + OpenApiConstants.API_KEY_LIST + "&targetDt=" + targetDt;
+        String url = OpenApiConstants.API_URL_DAILY_BOX_OFFICE 
+                + "?key=" + OpenApiConstants.API_KEY_LIST 
+                + "&targetDt=" + targetDt;
+               /* + "&itemPerPage=" + itemPerPage; // default 10
         /*String url = UriComponentsBuilder.fromHttpUrl(OpenApiConstants.API_URL_DAILY_BOX_OFFICE)
                 .queryParam("?key", OpenApiConstants.API_KEY_LIST)
                 .queryParam("&targetDt=", targetDt)
@@ -184,7 +190,7 @@ public class MovieApiGetService {
 
         //ResponseEntity<DailyBoxOfficeResponse> responseDailyBoxOffice = restTemplate.getForEntity(url, DailyBoxOfficeResponse.class);
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        log.info("responseDailyBoxOffice = " + response);
+        log.info("responseDailyBoxOffice = " + response.getBody().length());
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             String responseBody = response.getBody();

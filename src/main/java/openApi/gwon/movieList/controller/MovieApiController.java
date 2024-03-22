@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.service.MovieApiCallService;
 import openApi.gwon.movieList.service.MovieApiGetService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -22,6 +24,8 @@ import java.util.List;
 public class MovieApiController {
 
     private final MovieApiGetService movieApiGetService;
+
+    private final MovieApiCallService movieApiCallService;
 
     @GetMapping("/getMovieList/{movieCd}")
     public MovieListDto getMovie(@PathVariable String movieCd) {
@@ -54,11 +58,11 @@ public class MovieApiController {
         return movieApiGetService.findAllMovies();
     }
 
-    @GetMapping("/saveBoxOfficeApi")
-    public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(@RequestParam String targetDt) throws JsonProcessingException{
+   /* @GetMapping("/saveBoxOfficeApi")
+    public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(@RequestParam String targetDt,@RequestParam int itemsPerPage) throws JsonProcessingException{
 
-        return movieApiGetService.saveDailyBoxOfficeApi(targetDt);
-    }
+        return movieApiGetService.saveDailyBoxOfficeApi(targetDt,itemsPerPage);
+    }*/
 
     @GetMapping("/saveBoxOfficePeriod")
     public ResponseEntity<?> saveBoxOfficeDataForPeriod() {
@@ -67,6 +71,20 @@ public class MovieApiController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/search/weeklyBoxOffice")
+    public String searchWeeklyBoxOffice (
+        @RequestParam String targetDt,
+        @RequestParam(required = false) String weekGb,
+        @RequestParam(required = false) String repNationCd){
+
+        try {
+            return movieApiCallService.callWeeklyBoxOfficeApi(targetDt,weekGb,repNationCd);
+        } catch (Exception e) {
+            log.error("Exception when calling Weekly Box Office API", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error occurred while calling the API", e);
         }
     }
 
