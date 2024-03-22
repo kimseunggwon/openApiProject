@@ -75,7 +75,7 @@ public class MovieApiController {
     }
 
     @GetMapping("/search/weeklyBoxOffice")
-    public String searchWeeklyBoxOffice (
+    public ResponseEntity<String> searchWeeklyBoxOffice (
         @RequestParam String targetDt,
         @RequestParam(required = false) String weekGb,
         @RequestParam(required = false) String repNationCd){
