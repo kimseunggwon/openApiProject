@@ -32,9 +32,6 @@ public class MovieApiCallService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    // 페이지당 아이템 수를 상수로 정의
-    private static final int ITEMS_PER_PAGE = 100;
-
 
     /**
      * 주간/주말 박스오피스 API 서비스
@@ -96,65 +93,96 @@ public class MovieApiCallService {
 
     /** 영화목록 조회 API 서비스
      */
-    public List<MovieListDto> callMovieListApi() throws Exception{
-        int currentPage = 1;
-        int totalItems;
-        int totalPages;
-        List<MovieListDto> movieListDtoList = new ArrayList<>();
+    public List<MovieListDto> callMovieListApi() throws Exception {
+        final int ITEMS_PER_PAGE = 10; // 한 페이지에 요청할 영화의 개수를 지정
 
-
-        //첫 페이지 데이터를 가져와 총 아이템 수(totCnt) 확인
-        String firstPageUrl = String.valueOf(buildUrl(1,ITEMS_PER_PAGE));
+        List<MovieListDto> allMovies = new ArrayList<>();
+        String firstPageUrl = buildUrl(1, ITEMS_PER_PAGE).toUriString();
         log.info("firstPageUrl" + firstPageUrl);
         ResponseEntity<String> firstResponse = restTemplate.getForEntity(firstPageUrl, String.class);
-        log.info("reponfirstResponsese =  " + firstResponse);
+        log.info("firstResponse" + firstResponse);
 
-        if (firstResponse.getStatusCode() == HttpStatus.OK && firstResponse.getBody() != null) {
-            HashMap<String, Object> firstResultMap = objectMapper.readValue(firstResponse.getBody(), HashMap.class);
-            totalItems = (Integer) firstResultMap.get("totCnt");
-            log.info("totalItems"  + totalItems);
-            totalPages = (int) Math.ceil((double) totalItems / ITEMS_PER_PAGE);
-            log.info("totalPages" + totalPages);
-        } else {
-            throw new RuntimeException("Failed to call Movie API: " + firstResponse.getStatusCode());
-        }
+        int totalItems = extractTotalCount(firstResponse.getBody());
+        log.info("totalItems" + totalItems);
+        int totalPages = (int)Math.ceil((double)totalItems / ITEMS_PER_PAGE);
+        log.info("totalPages" + totalPages);
 
-        // 전체 페이지에 대해 반복하여 데이터 가져오기
         for (int page = 1; page <= totalPages; page++) {
-            String url = buildUrl(page,ITEMS_PER_PAGE).toUriString();
+            log.info("page" + page);
+            String url = buildUrl(page, ITEMS_PER_PAGE).toUriString();
+            log.info("url : " + url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                String responseBody = response.getBody();
-                HashMap<String,Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
-                List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) resultMap.get("movieList");
-
-                for (HashMap<String,Object> movie : movieList) {
-                    String movieCd = (String) movie.get("movieCd");
-
-                    //중복체크
-                    if (!)
-                }
-
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                log.info("response.getBody" + response.getBody());
+                allMovies.addAll(extractMovies(response.getBody()));
+                System.out.println("allMovies" + allMovies);
             }
         }
-
-        return
-
-
+       /* if (firstResponse.getStatusCode().is2xxSuccessful()) {
+            allMovies.addAll(extractMovies(firstResponse.getBody()));
+            log.info("allMovies.size : " + allMovies.size());
+        }*/
+        return allMovies;
     }
 
     private UriComponentsBuilder buildUrl(int currentPage, int itemsPerPage) {
         return UriComponentsBuilder
-                .fromUri(URI.create(OpenApiConstants.API_URL_WEEKLY_BOX_OFFICE))
+                .fromUriString(OpenApiConstants.API_URL_MOVIE_LIST)
                 .queryParam("key", OpenApiConstants.API_KEY_LIST)
-                .queryParam("curPage=" + currentPage)
-                .queryParam("itmPerPage" + itemsPerPage);
+                .queryParam("curPage" , currentPage)
+                .queryParam("itmPerPage" , itemsPerPage);
     }
+
 
     private int extractTotalCount (String responseBody) throws Exception {
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        HashMap<String,Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
+        HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
+        if (movieListResult != null) { // movieListResult가 null이 아닐 때만 접근
+            return (Integer) movieListResult.get("totCnt");
+        } else {
+            // 적절한 예외를 던지거나, 오류 처리
+            log.error("movieListResult is null");
+            throw new Exception("movieListResult is null");
+        }
     }
+
+    private List<MovieListDto> extractMovies(String responseBody) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<MovieListDto> movieListDtos = new ArrayList<>();
+
+
+        HashMap<String, Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
+        HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
+        List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) movieListResult.get("movieList");
+
+        for (HashMap<String, Object> movie : movieList) {
+            MovieListDto movieDto = new MovieListDto();
+            movieDto.setMovieListId(UUID.randomUUID().toString());
+            movieDto.setMovieCd((String) movie.get("movieCd"));
+            movieDto.setMovieNm((String) movie.get("movieNm"));
+            movieDto.setMovieNmEn((String) movie.get("movieNmEn"));
+            movieDto.setPrdtYear((String) movie.get("prdtYear"));
+            movieDto.setOpenDt((String) movie.get("openDt"));
+            movieDto.setTypeNm((String) movie.get("typeNm"));
+            movieDto.setPrdtStatNm((String) movie.get("prdtStatNm"));
+            movieDto.setNationAlt((String) movie.get("nationAlt"));
+            movieDto.setGenreAlt((String) movie.get("genreAlt"));
+            movieDto.setRepNationNm((String) movie.get("repNationNm"));
+            movieDto.setRepGenreNm((String) movie.get("repGenreNm"));
+
+            // 직렬화 처리
+            String directorsJson = objectMapper.writeValueAsString(movie.get("directors"));
+            String companiesJson = objectMapper.writeValueAsString(movie.get("companys"));
+            movieDto.setDirectorsJson(directorsJson);
+            movieDto.setCompaniesJson(companiesJson);
+
+            movieListDtos.add(movieDto);
+        }
+        return movieListDtos;
+    }
+
+
 
 
 }
