@@ -214,10 +214,10 @@
 
             }
 
-            // NOW 확인 함수
+            // 사용자 입력 날짜가 현재 날짜보다 미래인지 아닌지 확인 함수
             function isDateInFuture(inputDateString) {
-                var inputDate = new Date(inputDateString); // 사용자가 입력한 날짜
-                inputDate.setHours(0,0,0,0); // 입력 날짜의 시간을 00:00:00으로 설정
+                var inputDate = new Date(inputDateString); // 사용자가 입력 날짜
+                inputDate.setHours(0,0,0,0); // 입력 날짜의 시간을 00:00:00으로 설정 -> 단순 날짜 단위로만 비교하기 위해
                 var currentDate = new Date();
                 currentDate.setHours(0,0,0,0); // 현재 날짜의 시간을 00:00:00으로 설정
                 return inputDate > currentDate; // 입력 날짜가 미래인 경우 true 반환

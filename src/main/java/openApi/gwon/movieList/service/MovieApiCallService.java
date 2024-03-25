@@ -7,7 +7,7 @@ import jdk.security.jarsigner.JarSignerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
-import openApi.gwon.movieList.dto.WeeklyBoxOfficeList.WeeklyBoxOfficeListDto;
+import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 
 @Slf4j
@@ -28,6 +31,9 @@ public class MovieApiCallService {
     private final MovieListImplRepository movieListImplRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+
+    // 페이지당 아이템 수를 상수로 정의
+    private static final int ITEMS_PER_PAGE = 100;
 
 
     /**
@@ -86,6 +92,68 @@ public class MovieApiCallService {
             log.error("Exception when calling Weekly Box Office API", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("API 호출 중 오류가 발생했습니다.");
         }
+    }
+
+    /** 영화목록 조회 API 서비스
+     */
+    public List<MovieListDto> callMovieListApi() throws Exception{
+        int currentPage = 1;
+        int totalItems;
+        int totalPages;
+        List<MovieListDto> movieListDtoList = new ArrayList<>();
+
+
+        //첫 페이지 데이터를 가져와 총 아이템 수(totCnt) 확인
+        String firstPageUrl = String.valueOf(buildUrl(1,ITEMS_PER_PAGE));
+        log.info("firstPageUrl" + firstPageUrl);
+        ResponseEntity<String> firstResponse = restTemplate.getForEntity(firstPageUrl, String.class);
+        log.info("reponfirstResponsese =  " + firstResponse);
+
+        if (firstResponse.getStatusCode() == HttpStatus.OK && firstResponse.getBody() != null) {
+            HashMap<String, Object> firstResultMap = objectMapper.readValue(firstResponse.getBody(), HashMap.class);
+            totalItems = (Integer) firstResultMap.get("totCnt");
+            log.info("totalItems"  + totalItems);
+            totalPages = (int) Math.ceil((double) totalItems / ITEMS_PER_PAGE);
+            log.info("totalPages" + totalPages);
+        } else {
+            throw new RuntimeException("Failed to call Movie API: " + firstResponse.getStatusCode());
+        }
+
+        // 전체 페이지에 대해 반복하여 데이터 가져오기
+        for (int page = 1; page <= totalPages; page++) {
+            String url = buildUrl(page,ITEMS_PER_PAGE).toUriString();
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                String responseBody = response.getBody();
+                HashMap<String,Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
+                List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) resultMap.get("movieList");
+
+                for (HashMap<String,Object> movie : movieList) {
+                    String movieCd = (String) movie.get("movieCd");
+
+                    //중복체크
+                    if (!)
+                }
+
+            }
+        }
+
+        return
+
+
+    }
+
+    private UriComponentsBuilder buildUrl(int currentPage, int itemsPerPage) {
+        return UriComponentsBuilder
+                .fromUri(URI.create(OpenApiConstants.API_URL_WEEKLY_BOX_OFFICE))
+                .queryParam("key", OpenApiConstants.API_KEY_LIST)
+                .queryParam("curPage=" + currentPage)
+                .queryParam("itmPerPage" + itemsPerPage);
+    }
+
+    private int extractTotalCount (String responseBody) throws Exception {
+
     }
 
 
