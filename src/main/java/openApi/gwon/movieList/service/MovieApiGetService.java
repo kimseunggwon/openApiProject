@@ -68,14 +68,14 @@ public class MovieApiGetService {
       List<MovieListDto> toBeSave = new ArrayList<>();
 
       // 최대 100개까지만 저장
-      int maxMoviesToSave = 100;
+     /* int maxMoviesToSave = 100;
 
       for (MovieListDto movie : movieListDtos) {
           if (toBeSave.size() >= maxMoviesToSave) break;
           toBeSave.add(movie);
           // 중복체크 로직은 나중에
           log.info("toBeSave" +toBeSave);
-      }
+      }*/
         movieListImplRepository.insertMovies(toBeSave);
         log.info(toBeSave.size() + " movies saved to the database.");
 

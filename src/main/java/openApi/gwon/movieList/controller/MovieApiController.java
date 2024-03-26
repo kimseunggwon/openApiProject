@@ -84,7 +84,7 @@ public class MovieApiController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error occurred while calling the API", e);
         }
     }
-    @GetMapping("/testSave")
+    @GetMapping("/insert/movieList")
     public ResponseEntity<String> testSaveMovies() throws Exception {
         try {
             movieApiGetService.testSaveMoive();

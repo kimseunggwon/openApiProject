@@ -95,19 +95,24 @@ public class MovieApiCallService {
      */
     public List<MovieListDto> callMovieListApi() throws Exception {
         final int ITEMS_PER_PAGE = 10; // 한 페이지에 요청할 영화의 개수를 지정
-
+        final int MAX_ITEMS = 500;
         List<MovieListDto> allMovies = new ArrayList<>();
-        String firstPageUrl = buildUrl(1, ITEMS_PER_PAGE).toUriString();
-        log.info("firstPageUrl" + firstPageUrl);
-        ResponseEntity<String> firstResponse = restTemplate.getForEntity(firstPageUrl, String.class);
-        log.info("firstResponse" + firstResponse);
 
-        int totalItems = extractTotalCount(firstResponse.getBody());
-        log.info("totalItems" + totalItems);
-        int totalPages = (int)Math.ceil((double)totalItems / ITEMS_PER_PAGE);
-        log.info("totalPages" + totalPages);
+       // String firstPageUrl = buildUrl(1, ITEMS_PER_PAGE).toUriString();
+        //log.info("firstPageUrl" + firstPageUrl);
+        //ResponseEntity<String> firstResponse = restTemplate.getForEntity(firstPageUrl, String.class);
+        //log.info("firstResponse" + firstResponse);
 
-        for (int page = 1; page <= totalPages; page++) {
+        //int totalItems = extractTotalCount(firstResponse.getBody()); // 전체 데이터 개수
+        //log.info("totalItems" + totalItems);
+        //전체 데이터 개수를 페이지 당 데이터 개수로 나눈 값 전체 데이터 : 100,822 / 페이지 당 : 10  = 10083 페이지 ( 소수점 올림 )
+        //int totalPages = (int)Math.ceil((double)totalItems / ITEMS_PER_PAGE);
+        //log.info("totalPages" + totalPages);
+
+        int totalPages = (int) Math.ceil((double)MAX_ITEMS / ITEMS_PER_PAGE);
+
+        // ITEMS_PER_PAGE = 한 페이지에 10개씩 , page = 5개면 , 총 50개
+        for (int page = 1; page <= totalPages; page++) { //  page <= totalPages
             log.info("page" + page);
             String url = buildUrl(page, ITEMS_PER_PAGE).toUriString();
             log.info("url : " + url);
@@ -138,7 +143,7 @@ public class MovieApiCallService {
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String,Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
         HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
-        if (movieListResult != null) { // movieListResult가 null이 아닐 때만 접근
+        if (movieListResult != null) { // movieListResult 가 null 이 아닐 때만 접근
             return (Integer) movieListResult.get("totCnt");
         } else {
             // 적절한 예외를 던지거나, 오류 처리
@@ -154,8 +159,12 @@ public class MovieApiCallService {
 
         HashMap<String, Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
         HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
-        List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) movieListResult.get("movieList");
+        // NullPointerException 에러 방지
+        if (movieListResult == null) {
+            return movieListDtos;
+        }
 
+        List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) movieListResult.get("movieList");
         for (HashMap<String, Object> movie : movieList) {
             MovieListDto movieDto = new MovieListDto();
             movieDto.setMovieListId(UUID.randomUUID().toString());
