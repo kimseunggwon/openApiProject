@@ -80,44 +80,42 @@
         SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
         FROM MovieList
         WHERE 1=1
-        <if test="movieNm != null and movieNm != ''">
-            AND movieNm LIKE #{movieNm}
+        <if test="params.movieNm != null and params.movieNm != ''">
+            AND movieNm LIKE CONCAT('%', #{movieNm}, '%')
         </if>
-        <if test="directorName != null and directorName != ''">
-            AND directorsJson LIKE '%'+#{directorName}+'%'
+        <if test="params.directorName != null and params.directorName != ''">
+            AND directorsJson LIKE CONCAT('%', #{directorName}, '%')
         </if>
-        <if test="prdtYear != null and prdtYear != ''">
+        <if test="params.prdtYear != null and params.prdtYear != ''">
             AND prdtYear = #{prdtYear}
         </if>
-        <if test="openDtStart != null and openDtStart != ''">
+        <if test="params.openDtStart != null and params.openDtStart != ''">
             AND openDt >= #{openDtStart}
         </if>
-        <if test="openDtEnd != null and openDtEnd != ''">
+        <if test="params.openDtEnd != null and params.openDtEnd != ''">
             AND openDt <![CDATA[ <= ]]> #{openDtEnd}
         </if>
         ORDER BY openDt DESC
-        LIMIT #{offset}, #{limit}
     </select>
 
     <select id="countMovies" parameterType="map" resultType="int">
         SELECT COUNT(*)
         FROM MovieList
         WHERE 1=1
-        <if test="movieNm != null and movieNm != ''">
+        <if test="params.movieNm != null and params.movieNm != ''">
             AND movieNm LIKE CONCAT('%', #{movieNm}, '%')
         </if>
-        <if test="directorName != null and directorName != ''">
+        <if test="params.directorName != null and params.directorName != ''">
             AND directorsJson LIKE CONCAT('%', #{directorName}, '%')
         </if>
-        <if test="prdtYear != null and prdtYear != ''">
+        <if test="params.prdtYear != null and params.prdtYear != ''">
             AND prdtYear = #{prdtYear}
         </if>
-        <if test="openDtStart != null and openDtStart != ''">
+        <if test="params.openDtStart != null and params.openDtStart != ''">
             AND openDt >= #{openDtStart}
         </if>
-        <if test="openDtEnd != null and openDtEnd != ''">
+        <if test="params.openDtEnd != null and params.openDtEnd != ''">
             AND openDt <![CDATA[ <= ]]> #{openDtEnd}
-
         </if>
     </select>
 

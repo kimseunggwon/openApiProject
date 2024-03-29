@@ -114,6 +114,7 @@ public class MovieApiController {
             @RequestParam(defaultValue = "10") int size) { // 페이지당 보여줄 항목 수
 
         int offset = (page - 1) * size; // offset 계산 ( 건너뛸 항목의 수 , 어디서부터 데이터를 가져올지 결정 )
+        log.info("offset = {}" ,offset);
 
         Map<String, Object> params = new HashMap<>();
         params.put("movieNm", movieName);
@@ -123,6 +124,7 @@ public class MovieApiController {
         params.put("openDtEnd", openDateEnd);
         params.put("offset", offset);
         params.put("limit", size);
+        log.info("params = {} " , params);
 
         List<MovieListDto> movies = movieSearchList.searchMovieList(params);
         int totalMovies = movieSearchList.countMovies(params);

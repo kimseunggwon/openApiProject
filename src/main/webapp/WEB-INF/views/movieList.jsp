@@ -124,8 +124,68 @@
     <div class="no-result" style="display: none;">검색 결과가 없습니다.</div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-    // 여기에 JavaScript를 사용하여 조회 및 초기화 버튼 이벤트를 처리하고, 정렬 기능을 구현합니다.
+    $(document).ready(function () {
+        function fetchMovies(page = 1, size = 10) {
+            $.ajax({
+                url : '/search/movie',
+                type : 'GET',
+                data : {
+                    page : page,
+                    size : size,
+                },
+                success : function (response) {
+                    $('#total-count').text(response.totalMovies);
+                    const movies = response.movies;
+                    const tbody = $('#movie-list tbody');
+                    tbody.empty(); // 기존 목록을 비우고 새 목록으로 채운다
+
+                    if (movies.length === 0) {
+                        $('.no-result').show();
+                    } else {
+                        $('.no-result').show();
+                        $.each(movies,function (i,movie) {
+                            const tr = $('<tr>').append(
+                                $('<td>').text(movie.movieNm),
+                                $('<td>').text(movie.movieNmEn),
+                                $('<td>').text(movie.movieCd),
+                                $('<td>').text(movie.prdtYear),
+                                $('<td>').text(movie.openDt),
+                                $('<td>').text(movie.nationAlt),
+                                $('<td>').text(movie.typeNm),
+                                $('<td>').text(movie.genreAlt),
+                                $('<td>').text(movie.prdtStatNm),
+                                $('<td>').text(movie.directorsJson), // 여기서 directorsJson을 파싱하여 표시
+                                $('<td>').text(movie.companiesJson) // companiesJson도 마찬가지로 파싱하여 표시
+                            );
+                            tbody.append(tr)
+                        });
+                    }
+                },
+               error : function(xhr, status, error) {
+                   console.error("Error fetching movies:", status, error);
+               }
+            });
+        }
+
+        // 페이지 로드 시 영화 목록을 바로 가져온다
+        fetchMovies();
+
+        //조회 버튼 클릭시 이벤트 바인딩 todo :
+        $('.search-container button').click(function() {
+            fetchMovies();
+        });
+
+        // 초기화 버튼 클릭시 todo :
+
+        // 정렬 드롭다운 변경 이벤트 todo :
+        $('#sorting').change(function() {
+            // 여기서 선택된 정렬 옵션에 따라 fetchMovies를 호출
+        });
+
+    });
 </script>
 
 </body>
