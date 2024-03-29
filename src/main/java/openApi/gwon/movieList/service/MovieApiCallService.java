@@ -95,7 +95,7 @@ public class MovieApiCallService {
      */
     public List<MovieListDto> callMovieListApi() throws Exception {
         final int ITEMS_PER_PAGE = 10; // 한 페이지에 요청할 영화의 개수를 지정
-        final int MAX_ITEMS = 500;
+        final int MAX_ITEMS = 1000;
         List<MovieListDto> allMovies = new ArrayList<>();
 
        // String firstPageUrl = buildUrl(1, ITEMS_PER_PAGE).toUriString();
@@ -109,7 +109,8 @@ public class MovieApiCallService {
         //int totalPages = (int)Math.ceil((double)totalItems / ITEMS_PER_PAGE);
         //log.info("totalPages" + totalPages);
 
-        int totalPages = (int) Math.ceil((double)MAX_ITEMS / ITEMS_PER_PAGE);
+        int totalPages = (int) Math.ceil((double)MAX_ITEMS / ITEMS_PER_PAGE); // 500 / 10 => 10개씩 50 페이지 => 총 500개
+        log.info("totalPages aa" + totalPages);
 
         // ITEMS_PER_PAGE = 한 페이지에 10개씩 , page = 5개면 , 총 50개
         for (int page = 1; page <= totalPages; page++) { //  page <= totalPages
@@ -137,7 +138,6 @@ public class MovieApiCallService {
                 .queryParam("curPage" , currentPage)
                 .queryParam("itmPerPage" , itemsPerPage);
     }
-
 
     private int extractTotalCount (String responseBody) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -190,8 +190,6 @@ public class MovieApiCallService {
         }
         return movieListDtos;
     }
-
-
 
 
 }

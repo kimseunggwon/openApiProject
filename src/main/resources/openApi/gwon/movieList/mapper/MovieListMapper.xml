@@ -16,6 +16,11 @@
         FROM MovieList
     </select>
 
+    <select id="countAllMovies" resultType="int">
+        SELECT COUNT(*) FROM MovieList
+
+    </select>
+
     <select id="findByMovieCd" parameterType="string" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
         SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
         FROM MovieList
@@ -38,10 +43,6 @@
         </foreach>
     </insert>
 
-    <select id="countAllMovies" resultType="int">
-        SELECT COUNT(*) FROM MovieList
-
-    </select>
 
     <insert id="insertDailyBoxOffice" parameterType="list">
         INSERT INTO DailyBoxOffice (
@@ -73,6 +74,53 @@
         FROM DailyBoxOffice
         WHERE movieNm = #{movieNm}
     </select>
+
+
+    <select id="searchMovieList" parameterType="map" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
+        SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
+        FROM MovieList
+        WHERE 1=1
+        <if test="movieNm != null and movieNm != ''">
+            AND movieNm LIKE #{movieNm}
+        </if>
+        <if test="directorName != null and directorName != ''">
+            AND directorsJson LIKE '%'+#{directorName}+'%'
+        </if>
+        <if test="prdtYear != null and prdtYear != ''">
+            AND prdtYear = #{prdtYear}
+        </if>
+        <if test="openDtStart != null and openDtStart != ''">
+            AND openDt >= #{openDtStart}
+        </if>
+        <if test="openDtEnd != null and openDtEnd != ''">
+            AND openDt <![CDATA[ <= ]]> #{openDtEnd}
+        </if>
+        ORDER BY openDt DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countMovies" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM MovieList
+        WHERE 1=1
+        <if test="movieNm != null and movieNm != ''">
+            AND movieNm LIKE CONCAT('%', #{movieNm}, '%')
+        </if>
+        <if test="directorName != null and directorName != ''">
+            AND directorsJson LIKE CONCAT('%', #{directorName}, '%')
+        </if>
+        <if test="prdtYear != null and prdtYear != ''">
+            AND prdtYear = #{prdtYear}
+        </if>
+        <if test="openDtStart != null and openDtStart != ''">
+            AND openDt >= #{openDtStart}
+        </if>
+        <if test="openDtEnd != null and openDtEnd != ''">
+            AND openDt <![CDATA[ <= ]]> #{openDtEnd}
+
+        </if>
+    </select>
+
 
 
 </mapper>

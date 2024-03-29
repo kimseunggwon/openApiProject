@@ -2,8 +2,10 @@ package openApi.gwon.movieList.repository;
 
 import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface MovieListRepository {
@@ -19,6 +21,10 @@ public interface MovieListRepository {
     int countAllMovies();
 
     int insertDailyBoxOffice(List<DailyBoxOfficeListDto> dailyBoxOffice);
+
+    List<MovieListDto> searchMovieList(@Param("params") Map<String,Object> params);
+
+    int countMovies(@Param("params") Map<String, Object> params);
 
 }
 

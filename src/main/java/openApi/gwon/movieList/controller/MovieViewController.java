@@ -18,10 +18,16 @@ public class MovieViewController {
 
     private MovieApiGetService movieApiGetService;
 
-    @GetMapping("/movie.do")
-    public String hello(){
+    @GetMapping("/boxOfficeList.do")
+    public String boxOfficeList(){
 
-        return "main";
+        return "boxOfficeList";
+    }
+
+    @GetMapping("/movieList.do")
+    public String movieList() {
+
+        return "movieList";
     }
 
 

@@ -3,9 +3,12 @@ package openApi.gwon.movieList.mapper;
 import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Mapper
@@ -22,5 +25,10 @@ public interface MovieListMapper {
     int countAllMovies();
 
     int insertDailyBoxOffice(List<DailyBoxOfficeListDto> dailyBoxOffice);
+
+    List<MovieListDto> searchMovieList(@Param("params") Map<String,Object> params);
+
+    int countMovies(@Param("params") Map<String, Object> params);
+
 
 }

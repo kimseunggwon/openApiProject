@@ -43,18 +43,19 @@ public class MovieApiGetService {
     public List<MovieListDto> findAllMovies() {
 
         int countMovies = movieListImplRepository.countAllMovies();
-        log.info("countMovies = "+ countMovies);
+        log.info("countMovies = " + countMovies);
 
         return movieListImplRepository.findAll();
     }
 
-    /** 영화목록 조회 API 서비스 저장
+    /**
+     * 영화목록 조회 API 서비스 저장
      */
-    public List<MovieListDto> saveMovieApi(String movieNm) throws Exception{
+    public List<MovieListDto> saveMovieApi(String movieNm) throws Exception {
         List<MovieListDto> movieListDtos = callMovieApi(movieNm);
 
         int countMovies = movieListImplRepository.countAllMovies();
-        log.info("countMovies = "+ countMovies);
+        log.info("countMovies = " + countMovies);
 
         int insertMoive = movieListImplRepository.insertMovies(movieListDtos);
         log.info("{} rows inserted into database", insertMoive);
@@ -62,13 +63,15 @@ public class MovieApiGetService {
     }
 
     public void testSaveMoive() throws Exception {
-      List<MovieListDto> movieListDtos = movieApiCallService.callMovieListApi();
+        List<MovieListDto> movieListDtos = movieApiCallService.callMovieListApi();
 
-      //실제 DB에 저장될 영화 목록
-      List<MovieListDto> toBeSave = new ArrayList<>();
+        //실제 DB에 저장될 영화 목록
+        List<MovieListDto> toBeSave = new ArrayList<>();
+        // 영화 목록을 toBeSave에 추가
+        toBeSave.addAll(movieListDtos);
 
-      // 최대 100개까지만 저장
-     /* int maxMoviesToSave = 100;
+        // 최대 100개까지만 저장
+/*      int maxMoviesToSave = 100;
 
       for (MovieListDto movie : movieListDtos) {
           if (toBeSave.size() >= maxMoviesToSave) break;
@@ -82,8 +85,8 @@ public class MovieApiGetService {
     }
 
 
-
-    /** 일별 박스오피스 API 서비스 저장
+    /**
+     * 일별 박스오피스 API 서비스 저장
      */
     public List<DailyBoxOfficeListDto> saveDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
 
@@ -106,14 +109,15 @@ public class MovieApiGetService {
     }
 
 
-    /** 20240101 ~ now 원하는 날짜 저장
+    /**
+     * 20240101 ~ now 원하는 날짜 저장
      */
     public void saveDailyBoxOfficeForPeriod() throws JsonProcessingException {
-        LocalDate startDate = LocalDate.of(2024,1,1);
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.now();
 
         // 설정한 기간 동안 각 날짜에 대해 반복, 루프의 각 단계에서 하루씩 날짜 증가
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)){
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             log.info("startDate " + startDate);
             log.info("endDate " + endDate);
             log.info("date " + date);
@@ -131,17 +135,18 @@ public class MovieApiGetService {
 
     /**
      * 영화목록 조회 API 서비스
+     *
      * @param movieNm
      * @return MovieListDto
      * @throws Exception
      */
-    public List<MovieListDto> callMovieApi(String movieNm) throws Exception{
+    public List<MovieListDto> callMovieApi(String movieNm) throws Exception {
 
         // itemPerPage= 페이지네이션 지정
-        String url = OpenApiConstants.API_URL_MOVIE_LIST 
-                + "?key=" + OpenApiConstants.API_KEY_LIST 
-                + "&movieNm=" 
-                + movieNm +"&itemPerPage=20";
+        String url = OpenApiConstants.API_URL_MOVIE_LIST
+                + "?key=" + OpenApiConstants.API_KEY_LIST
+                + "&movieNm="
+                + movieNm + "&itemPerPage=20";
         log.info("MOVIE_LIST url = " + url);
 
         // UriComponentsBuilder 클래스 자동인코딩 이슈로 보류
@@ -154,57 +159,58 @@ public class MovieApiGetService {
         log.info("reponse =  " + response);
 
         int countMovies = movieListImplRepository.countAllMovies();
-        log.info("countMovies = "+ countMovies);
+        log.info("countMovies = " + countMovies);
 
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null){
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             String responseBody = response.getBody();
 
-                HashMap<String, Object> resultMap = objectMapper.readValue(responseBody,HashMap.class);
-                HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
-                log.info("totCnt = " +  movieListResult.get("totCnt"));
-                Integer totCnt = (Integer) movieListResult.get("totCnt");
-                List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) movieListResult.get("movieList");
+            HashMap<String, Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
+            HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
+            log.info("totCnt = " + movieListResult.get("totCnt"));
+            Integer totCnt = (Integer) movieListResult.get("totCnt");
+            List<HashMap<String, Object>> movieList = (List<HashMap<String, Object>>) movieListResult.get("movieList");
 
-                List<MovieListDto> movieListDtos = new ArrayList<>();
-                for (HashMap<String,Object> movie : movieList) {
-                    MovieListDto movieDto = new MovieListDto();
-                    movieDto.setMovieListId((UUID.randomUUID().toString()));
-                    movieDto.setMovieCd((String) movie.get("movieCd"));
-                    movieDto.setMovieNm((String) movie.get("movieNm"));
-                    movieDto.setMovieNmEn((String) movie.get("movieNmEn"));
-                    movieDto.setPrdtYear((String) movie.get("prdtYear"));
-                    movieDto.setOpenDt((String) movie.get("openDt"));
-                    movieDto.setTypeNm((String) movie.get("typeNm"));
-                    movieDto.setPrdtStatNm((String) movie.get("prdtStatNm"));
-                    movieDto.setNationAlt((String) movie.get("nationAlt"));
-                    movieDto.setGenreAlt((String) movie.get("genreAlt"));
-                    movieDto.setRepNationNm((String) movie.get("repNationNm"));
-                    movieDto.setRepGenreNm((String) movie.get("repGenreNm"));
-                    movieDto.setTotCnt(totCnt);
+            List<MovieListDto> movieListDtos = new ArrayList<>();
+            for (HashMap<String, Object> movie : movieList) {
+                MovieListDto movieDto = new MovieListDto();
+                movieDto.setMovieListId((UUID.randomUUID().toString()));
+                movieDto.setMovieCd((String) movie.get("movieCd"));
+                movieDto.setMovieNm((String) movie.get("movieNm"));
+                movieDto.setMovieNmEn((String) movie.get("movieNmEn"));
+                movieDto.setPrdtYear((String) movie.get("prdtYear"));
+                movieDto.setOpenDt((String) movie.get("openDt"));
+                movieDto.setTypeNm((String) movie.get("typeNm"));
+                movieDto.setPrdtStatNm((String) movie.get("prdtStatNm"));
+                movieDto.setNationAlt((String) movie.get("nationAlt"));
+                movieDto.setGenreAlt((String) movie.get("genreAlt"));
+                movieDto.setRepNationNm((String) movie.get("repNationNm"));
+                movieDto.setRepGenreNm((String) movie.get("repGenreNm"));
+                movieDto.setTotCnt(totCnt);
 
-                    String directorsJson = objectMapper.writeValueAsString(movie.get("directors"));
-                    String companiesJson = objectMapper.writeValueAsString(movie.get("companys"));
-                    movieDto.setDirectorsJson(directorsJson);
-                    movieDto.setCompaniesJson(companiesJson);
+                String directorsJson = objectMapper.writeValueAsString(movie.get("directors"));
+                String companiesJson = objectMapper.writeValueAsString(movie.get("companys"));
+                movieDto.setDirectorsJson(directorsJson);
+                movieDto.setCompaniesJson(companiesJson);
 
-                    movieListDtos.add(movieDto);
-                }
-                return movieListDtos;
+                movieListDtos.add(movieDto);
+            }
+            return movieListDtos;
 
-        }  else {
+        } else {
             throw new RuntimeException("Failed to call Movie API: " + response.getStatusCode());
         }
     }
 
     /**
      * 일별 박스오피스 API 서비스
+     *
      * @param targetDt
      * @return
      */
     public List<DailyBoxOfficeListDto> callDailyBoxOfficeApi(String targetDt) throws JsonProcessingException {
 
-        String url = OpenApiConstants.API_URL_DAILY_BOX_OFFICE 
-                + "?key=" + OpenApiConstants.API_KEY_LIST 
+        String url = OpenApiConstants.API_URL_DAILY_BOX_OFFICE
+                + "?key=" + OpenApiConstants.API_KEY_LIST
                 + "&targetDt=" + targetDt;
                /* + "&itemPerPage=" + itemPerPage; // default 10
         /*String url = UriComponentsBuilder.fromHttpUrl(OpenApiConstants.API_URL_DAILY_BOX_OFFICE)
@@ -222,13 +228,14 @@ public class MovieApiGetService {
             ObjectMapper objectMapper = new ObjectMapper();
 
             // TypeReference :
-            Map<String,Object> resultMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
-            Map<String,Object> boxOfficeResult = (Map<String, Object>) resultMap.get("boxOfficeResult");
+            Map<String, Object> resultMap = objectMapper.readValue(responseBody, new TypeReference<Map<String, Object>>() {
+            });
+            Map<String, Object> boxOfficeResult = (Map<String, Object>) resultMap.get("boxOfficeResult");
             // list Map
-            List<Map<String,Object>> dailyBoxOfficeList = (List<Map<String, Object>>) boxOfficeResult.get("dailyBoxOfficeList");
+            List<Map<String, Object>> dailyBoxOfficeList = (List<Map<String, Object>>) boxOfficeResult.get("dailyBoxOfficeList");
 
             List<DailyBoxOfficeListDto> dailyBoxOfficeListDtos = new ArrayList<>();
-            for (Map<String,Object> dailyBoxOffice: dailyBoxOfficeList) {
+            for (Map<String, Object> dailyBoxOffice : dailyBoxOfficeList) {
                 DailyBoxOfficeListDto dto = new DailyBoxOfficeListDto();
                 dto.setDailyBoxOfficeId(UUID.randomUUID().toString());
                 dto.setRnum((String) dailyBoxOffice.get("rnum"));
@@ -238,7 +245,7 @@ public class MovieApiGetService {
                 dto.setMovieCd((String) dailyBoxOffice.get("movieCd"));
                 dto.setMovieNm((String) dailyBoxOffice.get("movieNm"));
                 dto.setOpenDt((String) dailyBoxOffice.get("openDt"));
-               /* dto.setSalesAmt((long) Integer.parseInt((String) dailyBoxOffice.get("salesAmt")));*/
+                /* dto.setSalesAmt((long) Integer.parseInt((String) dailyBoxOffice.get("salesAmt")));*/
                 dto.setSalesAmt(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("salesAmt"))));
                 dto.setSalesShare((String) dailyBoxOffice.get("salesShare"));
                 dto.setSalesInten(String.valueOf(Long.parseLong((String) dailyBoxOffice.get("salesInten"))));
