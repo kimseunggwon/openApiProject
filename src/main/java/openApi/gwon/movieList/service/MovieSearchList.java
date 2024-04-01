@@ -38,6 +38,8 @@ public class MovieSearchList {
                 // directorsJson 파싱 ( null 이거나 비어있는 경우 설정)
                 if (movie.getDirectors() != null && !movie.getDirectors().isEmpty()) {
                     Directors[] directorsArray = objectMapper.readValue(movie.getDirectors(), Directors[].class); // Directors 배열
+                    // 배열말고 , TypeReference 사용하여 리스트로 직접 변환도 가능  ( 중간에 발생할 수 있는 배열과 리스트 사이의 변환을 지운다 )
+                    // List<Directors> directorsList = objectMapper.readValue(movie.getDirectors(), new TypeReference<List<Directors>>(){});
                     movie.setDirectorsList(Arrays.asList(directorsArray));
                     //log.info("directors aaa={} " , directorsArray);
                 } else {

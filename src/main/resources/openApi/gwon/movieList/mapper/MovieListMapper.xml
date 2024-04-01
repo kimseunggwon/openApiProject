@@ -96,6 +96,7 @@
             AND openDt <![CDATA[ <= ]]> #{openDtEnd}
         </if>
         ORDER BY openDt DESC
+        LIMIT #{params.limit} OFFSET #{params.offset}
     </select>
 
     <select id="countMovies" parameterType="map" resultType="int">

@@ -122,6 +122,12 @@
         </tbody>
     </table>
     <div class="no-result" style="display: none;">검색 결과가 없습니다.</div>
+
+    <div class="pagination-container">
+        <button id="prev-page">이전</button>
+        <span id="current-page">1</span> / <span id="total-pages">0</span>
+        <button id="next-page">다음</button>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -149,7 +155,14 @@
                         $('.no-result').show();
 
                         $.each(movies, function (i,movie) {
-                            // 감독 정보 파싱
+
+                            // 서버로 받은 파싱된 리스트를 감독과 제작사 이름을 문자열로 합친다
+                            // map() 함수로 directorsList와 companiesList의 각 요소를 순회하면서 감독의 이름과 제작사의 이름을 추출하여 새로운 배열을 만들고
+                            // 단일 문자열로 결합한다
+                            var directorsNames = movie.directorsList.map(director => director.peopleNm).join(", ");
+                            var companiesNames = movie.companiesList.map(company => company.companyNm).join(", ");
+
+                          /*  // 감독 정보 파싱
                             var directorsNames = movie.directorsList.map(function(director) {
                                 return director.peopleNm;
                             }).join(", ") || '';
@@ -157,7 +170,7 @@
                             // 제작사 정보 파싱
                             var companiesNames = movie.companiesList.map(function(company) {
                                 return company.companyNm;
-                            }).join(", ") || '';
+                            }).join(", ") || '';*/
 
                             // 개봉일을 YYYY.MM.DD 형식으로 변환하는 코드
                             var formattedOpenDt = movie.openDt.substring(0, 4) + '.' +
