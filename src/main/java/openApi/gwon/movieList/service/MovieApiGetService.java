@@ -189,8 +189,8 @@ public class MovieApiGetService {
 
                 String directorsJson = objectMapper.writeValueAsString(movie.get("directors"));
                 String companiesJson = objectMapper.writeValueAsString(movie.get("companys"));
-                movieDto.setDirectorsJson(directorsJson);
-                movieDto.setCompaniesJson(companiesJson);
+                movieDto.setDirectors(directorsJson);
+                movieDto.setCompanys(companiesJson);
 
                 movieListDtos.add(movieDto);
             }

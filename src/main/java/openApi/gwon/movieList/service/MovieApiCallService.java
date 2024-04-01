@@ -183,8 +183,8 @@ public class MovieApiCallService {
             // 직렬화 처리
             String directorsJson = objectMapper.writeValueAsString(movie.get("directors"));
             String companiesJson = objectMapper.writeValueAsString(movie.get("companys"));
-            movieDto.setDirectorsJson(directorsJson);
-            movieDto.setCompaniesJson(companiesJson);
+            movieDto.setDirectors(directorsJson);
+            movieDto.setCompanys(companiesJson);
 
             movieListDtos.add(movieDto);
         }

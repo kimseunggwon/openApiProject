@@ -142,23 +142,40 @@
                     const tbody = $('#movie-list tbody');
                     tbody.empty(); // 기존 목록을 비우고 새 목록으로 채운다
 
+
                     if (movies.length === 0) {
                         $('.no-result').show();
                     } else {
                         $('.no-result').show();
-                        $.each(movies,function (i,movie) {
+
+                        $.each(movies, function (i,movie) {
+                            // 감독 정보 파싱
+                            var directorsNames = movie.directorsList.map(function(director) {
+                                return director.peopleNm;
+                            }).join(", ") || '';
+
+                            // 제작사 정보 파싱
+                            var companiesNames = movie.companiesList.map(function(company) {
+                                return company.companyNm;
+                            }).join(", ") || '';
+
+                            // 개봉일을 YYYY.MM.DD 형식으로 변환하는 코드
+                            var formattedOpenDt = movie.openDt.substring(0, 4) + '.' +
+                                movie.openDt.substring(4, 6) + '.' +
+                                movie.openDt.substring(6, 8);
+
                             const tr = $('<tr>').append(
                                 $('<td>').text(movie.movieNm),
                                 $('<td>').text(movie.movieNmEn),
                                 $('<td>').text(movie.movieCd),
                                 $('<td>').text(movie.prdtYear),
-                                $('<td>').text(movie.openDt),
+                                $('<td>').text(formattedOpenDt),
                                 $('<td>').text(movie.nationAlt),
                                 $('<td>').text(movie.typeNm),
                                 $('<td>').text(movie.genreAlt),
                                 $('<td>').text(movie.prdtStatNm),
-                                $('<td>').text(movie.directorsJson), // 여기서 directorsJson을 파싱하여 표시
-                                $('<td>').text(movie.companiesJson) // companiesJson도 마찬가지로 파싱하여 표시
+                                $('<td>').text(directorsNames), // 여기서 directorsJson을 파싱하여 표시
+                                $('<td>').text(companiesNames) // companiesJson도 마찬가지로 파싱하여 표시
                             );
                             tbody.append(tr)
                         });

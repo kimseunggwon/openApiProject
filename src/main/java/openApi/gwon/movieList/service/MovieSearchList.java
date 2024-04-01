@@ -1,12 +1,19 @@
 package openApi.gwon.movieList.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import openApi.gwon.movieList.dto.MovieList.Company;
+import openApi.gwon.movieList.dto.MovieList.Directors;
 import openApi.gwon.movieList.dto.MovieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +23,7 @@ import java.util.Map;
 public class MovieSearchList {
 
     private final MovieListImplRepository movieListImplRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * 주어진 매개변수에 따라 영화 목록을 검색
@@ -24,9 +32,32 @@ public class MovieSearchList {
      */
     public List<MovieListDto> searchMovieList(Map<String, Object> params) {
 
+        List<MovieListDto> movies = movieListImplRepository.searchMovieList(params);
+        movies.forEach( movie -> {
+            try {
+                // directorsJson 파싱 ( null 이거나 비어있는 경우 설정)
+                if (movie.getDirectors() != null && !movie.getDirectors().isEmpty()) {
+                    Directors[] directorsArray = objectMapper.readValue(movie.getDirectors(), Directors[].class); // Directors 배열
+                    movie.setDirectorsList(Arrays.asList(directorsArray));
+                    //log.info("directors aaa={} " , directorsArray);
+                } else {
+                    movie.setDirectorsList(new ArrayList<>());
+                }
+
+                // companiesJson 파싱 ( null 이거나 비어있는 경우 설정)
+                if (movie.getCompanys() != null && !movie.getCompanys().isEmpty()){
+                    Company[] companiesArray = objectMapper.readValue(movie.getCompanys(), Company[].class); // Company 배열
+                    movie.setCompaniesList(Arrays.asList(companiesArray));
+                    //log.info("companiesArray aaa ={} " , companiesArray);
+                }
+            } catch (JsonProcessingException e) {
+                log.error("Error parsing Json" , e);
+            }
+        });
         // 필요에 따라 리포지토리 호출 전 추가 로직 가능
         log.info("영화 검색 매개변수 : {}" ,params);
-        return movieListImplRepository.searchMovieList(params);
+        //log.info("movies 결과 : {} ",  movies);
+        return movies;
     }
 
     public int countMovies(Map<String,Object> params) {
