@@ -81,19 +81,19 @@
         FROM MovieList
         WHERE 1=1
         <if test="params.movieNm != null and params.movieNm != ''">
-            AND movieNm LIKE CONCAT('%', #{movieNm}, '%')
+            AND movieNm LIKE CONCAT('%', #{params.movieNm}, '%')
         </if>
         <if test="params.directorName != null and params.directorName != ''">
-            AND directorsJson LIKE CONCAT('%', #{directorName}, '%')
+            AND directors LIKE CONCAT('%', #{params.directorName}, '%')
         </if>
         <if test="params.prdtYear != null and params.prdtYear != ''">
-            AND prdtYear = #{prdtYear}
+            AND prdtYear = #{params.prdtYear}
         </if>
         <if test="params.openDtStart != null and params.openDtStart != ''">
-            AND openDt >= #{openDtStart}
+            AND openDt >= #{params.openDtStart}
         </if>
         <if test="params.openDtEnd != null and params.openDtEnd != ''">
-            AND openDt <![CDATA[ <= ]]> #{openDtEnd}
+            AND openDt <![CDATA[ <= ]]> #{params.openDtEnd}
         </if>
         ORDER BY openDt DESC
         LIMIT #{params.limit} OFFSET #{params.offset}
@@ -104,19 +104,19 @@
         FROM MovieList
         WHERE 1=1
         <if test="params.movieNm != null and params.movieNm != ''">
-            AND movieNm LIKE CONCAT('%', #{movieNm}, '%')
+            AND movieNm LIKE CONCAT('%', #{params.movieNm}, '%')
         </if>
         <if test="params.directorName != null and params.directorName != ''">
-            AND directorsJson LIKE CONCAT('%', #{directorName}, '%')
+            AND directors LIKE CONCAT('%', #{params.directorName}, '%')
         </if>
         <if test="params.prdtYear != null and params.prdtYear != ''">
-            AND prdtYear = #{prdtYear}
+            AND prdtYear = #{params.prdtYear}
         </if>
         <if test="params.openDtStart != null and params.openDtStart != ''">
-            AND openDt >= #{openDtStart}
+            AND openDt >= #{params.openDtStart}
         </if>
         <if test="params.openDtEnd != null and params.openDtEnd != ''">
-            AND openDt <![CDATA[ <= ]]> #{openDtEnd}
+            AND openDt <![CDATA[ <= ]]> #{params.openDtEnd}
         </if>
     </select>
 

@@ -126,6 +126,9 @@ public class MovieApiController {
         log.info("size = {} " , size);
         log.info("offset = {} " , offset);
         log.info("params = {} " , params);
+        log.info("openDateStart" + openDateStart);
+        log.info("openDateEnd" + openDateEnd);
+
 
         List<MovieListDto> movies = movieSearchList.searchMovieList(params);
         int totalMovies = movieSearchList.countMovies(params);

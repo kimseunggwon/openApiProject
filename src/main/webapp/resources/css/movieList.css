@@ -89,3 +89,21 @@ th {
     color: #aaa; /* 비활성화된 버튼의 글자 색상 설정 */
     cursor: default; /* 비활성화된 버튼의 커서를 기본 모양으로 설정 */
 }
+
+/* 추가된 CSS 스타일 */
+h1 {
+    text-align: center; /* 제목 가운데 정렬 */
+
+}
+
+.search-container button {
+    margin-right: 20px;
+    padding: 10px 20px; /* 버튼 패딩 조정 */
+    font-size: 1rem; /* 버튼 글자 크기 조정 */
+}
+
+/* 검색 버튼과 초기화 버튼을 왼쪽으로 정렬하기 위한 클래스 추가 */
+.button-container {
+    text-align: right;
+}
+

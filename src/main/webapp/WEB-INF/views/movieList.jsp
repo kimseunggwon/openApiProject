@@ -14,9 +14,15 @@
         <input type="text" id="movie-name" placeholder="영화명">
         <input type="text" id="director-name" placeholder="감독명">
         <input type="text" id="production-year" placeholder="제작연도">
-        <input type="text" id="release-date" placeholder="개봉일자">
-        <button>조회</button>
-        <button>초기화</button>
+        <!-- 개봉일자 시작일 -->
+        <input type="text" id="release-date-start" class="date-input" onfocus="this.type='date'" onblur="this.type='text'" placeholder="시작 일자">
+        <!-- 개봉일자 종료일 -->
+        <input type="text" id="release-date-end" class="date-input" onfocus="this.type='date'" onblur="this.type='text'" placeholder="종료 일자">
+
+        <div class="button-container">
+            <button id="search-button">조회</button>
+            <button id="reset-button">초기화</button>
+        </div>
     </div>
 
     <div class="sorting-container">
@@ -79,14 +85,36 @@
             fetchMovies(currentPage, pageSize); // 현재 페이지 + 페이지당 영화 수
         }
 
-        function fetchMovies(page, size) {
+        // 조회 버튼 클릭 이벤트
+        $('#search-button').click(function () {
+            var movieName = $('#movie-name').val();
+            var directorName = $('#director-name').val();
+            var productionYear = $('#production-year').val();
+            var openDateStart = formatDateToDb($('#release-date-start').val());
+            var openDateEnd = formatDateToDb($('#release-date-end').val());
+            console.log(openDateStart);
+            console.log(openDateEnd);
+
+            // 첫 페이지부터 조회를 시작
+            fetchMovies(1, pageSize, movieName, directorName, productionYear, openDateStart, openDateEnd);
+        })
+
+        function fetchMovies(page, size, movieName = '', directorName = '', productionYear = '', releaseDate = '',openDateStart = '',openDateEnd ='') {
+            var queryData = {
+                page : page,
+                size : size,
+                movieName : movieName,
+                directorName: directorName,
+                productionYear: productionYear,
+                releaseDate: releaseDate,
+                openDateStart : openDateStart,
+                openDateEnd : openDateEnd
+            };
+
             $.ajax({
                 url: '/search/movie',
                 type: 'GET',
-                data: {
-                    page: page,
-                    size: size,
-                },
+                data: queryData,
                 success: function (response) {
                     totalMovies = response.totalMovies;
                     totalPages = Math.ceil(totalMovies / pageSize); // 총 페이지 수 계산
@@ -98,11 +126,10 @@
                     const tbody = $('#movie-list tbody');
                     tbody.empty(); // 기존 목록을 비우고 새 목록으로 채운다
 
-
                     if (movies.length === 0) {
                         $('.no-result').show();
                     } else {
-                        $('.no-result').show();
+                        $('.no-result').hide();
 
                         $.each(movies, function (i, movie) {
 
@@ -123,9 +150,9 @@
                               }).join(", ") || '';*/
 
                             // 개봉일을 YYYY.MM.DD 형식으로 변환하는 코드
-                            var formattedOpenDt = movie.openDt.substring(0, 4) + '.' +
-                                movie.openDt.substring(4, 6) + '.' +
-                                movie.openDt.substring(6, 8);
+                            var formattedOpenDt = movie.openDt && movie.openDt.length === 8 ?
+                                movie.openDt.substring(0, 4) + '.' + movie.openDt.substring(4, 6) + '.' + movie.openDt.substring(6, 8) :
+                                ''; // openDt가 유효하지 않으면 빈 문자열을 사용
 
                             const tr = $('<tr>').append(
                                 $('<td>').text(movie.movieNm),
@@ -146,9 +173,22 @@
                 },
                 error: function (xhr, status, error) {
                     console.error("Error fetching movies:", status, error);
+                    $('.no-result').show(); // 에러 발생 시에도 메시지를 보여줌
                 }
             });
         }
+
+        // 초기화 버튼 클릭 이벤트
+        $('#reset-button').click(function () {
+            $('#movie-name').val('');
+            $('#director-name').val('');
+            $('#production-year').val('');
+            $('#release-date-start').val('');
+            $('#release-date-end').val('');
+
+            // 필터 없이 첫 페이지부터 다시 로드
+            fetchMovies(1, pageSize);
+        });
 
         // fetchMovies 함수 외부에 있어야한다
         // 이전 페이지 버튼
@@ -165,7 +205,7 @@
             }
         });
 
-        // 페이지 로드 시 영화 목록을 바로 가져온다
+        // 페이지 로드 시 첫 페이지의 영화 목록을 바로 가져온다
         fetchMovies(currentPage, pageSize);
 
         //조회 버튼 클릭시 이벤트 바인딩 todo :
@@ -181,6 +221,14 @@
         });
 
     });
+</script>
+<script>
+    //날짜 형식 : YYYMMDD
+    function formatDateToDb(dateString) {
+        return dateString.replace(/-/g, '');
+    }
+
+
 </script>
 
 </body>
