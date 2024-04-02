@@ -1,0 +1,91 @@
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    width: 80%;
+    margin: auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.search-container,
+.sorting-container {
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+.search-container:after,
+.sorting-container:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+input[type=text],
+button,
+select {
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+}
+button {
+    background-color: #5CACEE;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #5599FF;
+}
+.total-count {
+    float: left;
+}
+.sorting-select {
+    float: right;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background-color: #eee;
+}
+.no-result {
+    text-align: center;
+    padding: 20px;
+}
+
+.pagination-container {
+    text-align: center; /* 페이지네이션을 가운데로 정렬 */
+    margin-top: 20px; /* 상단 여백 추가 */
+}
+
+.pagination-container button {
+    padding: 10px 15px; /* 버튼 내부 패딩을 크게 설정 */
+    margin: 0 5px; /* 버튼 사이의 여백 설정 */
+    font-size: 16px; /* 글자 크기 설정 */
+    background-color: #f4f4f4; /* 버튼 배경 색상 설정 */
+    border: 1px solid #ddd; /* 버튼 테두리 설정 */
+    cursor: pointer; /* 커서를 손가락 모양으로 설정 */
+    color : darkkhaki;
+}
+
+.pagination-container button:hover {
+    background-color: bisque; /* 호버 시 버튼 배경 색상 변경 */
+}
+
+.pagination-container button[disabled] {
+    color: #aaa; /* 비활성화된 버튼의 글자 색상 설정 */
+    cursor: default; /* 비활성화된 버튼의 커서를 기본 모양으로 설정 */
+}

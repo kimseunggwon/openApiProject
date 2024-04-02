@@ -2,80 +2,13 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/movieList.css?v=20240402">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>영화 목록</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .search-container,
-        .sorting-container {
-            margin-bottom: 20px;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-        .search-container:after,
-        .sorting-container:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        input[type=text],
-        button,
-        select {
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-        }
-        button {
-            background-color: #5CACEE;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #5599FF;
-        }
-        .total-count {
-            float: left;
-        }
-        .sorting-select {
-            float: right;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th,
-        td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #eee;
-        }
-        .no-result {
-            text-align: center;
-            padding: 20px;
-        }
-    </style>
 </head>
 <body>
-
+<h1>영화정보</h1>
 <div class="container">
     <div class="search-container">
         <input type="text" id="movie-name" placeholder="영화명">
@@ -134,16 +67,33 @@
 
 <script>
     $(document).ready(function () {
-        function fetchMovies(page = 1, size = 10) {
+
+        var currentPage = 1; // 현재 페이지 번호
+        var totalMovie = 0; // 총 영화 수
+        var pageSize = 10; // 페이지당 영화 수
+        var totalPages = 0; // 총 페이지 수
+
+        //페이지네이션 버튼 이벤트 핸들러
+        function handlePaginationClick(newPage) {
+            currentPage = newPage;
+            fetchMovies(currentPage, pageSize); // 현재 페이지 + 페이지당 영화 수
+        }
+
+        function fetchMovies(page, size) {
             $.ajax({
-                url : '/search/movie',
-                type : 'GET',
-                data : {
-                    page : page,
-                    size : size,
+                url: '/search/movie',
+                type: 'GET',
+                data: {
+                    page: page,
+                    size: size,
                 },
-                success : function (response) {
-                    $('#total-count').text(response.totalMovies);
+                success: function (response) {
+                    totalMovies = response.totalMovies;
+                    totalPages = Math.ceil(totalMovies / pageSize); // 총 페이지 수 계산
+                    $('#total-count').text(totalMovies);
+                    $('#current-page').text(currentPage);
+                    $('#total-pages').text(totalPages);
+
                     const movies = response.movies;
                     const tbody = $('#movie-list tbody');
                     tbody.empty(); // 기존 목록을 비우고 새 목록으로 채운다
@@ -154,7 +104,7 @@
                     } else {
                         $('.no-result').show();
 
-                        $.each(movies, function (i,movie) {
+                        $.each(movies, function (i, movie) {
 
                             // 서버로 받은 파싱된 리스트를 감독과 제작사 이름을 문자열로 합친다
                             // map() 함수로 directorsList와 companiesList의 각 요소를 순회하면서 감독의 이름과 제작사의 이름을 추출하여 새로운 배열을 만들고
@@ -162,15 +112,15 @@
                             var directorsNames = movie.directorsList.map(director => director.peopleNm).join(", ");
                             var companiesNames = movie.companiesList.map(company => company.companyNm).join(", ");
 
-                          /*  // 감독 정보 파싱
-                            var directorsNames = movie.directorsList.map(function(director) {
-                                return director.peopleNm;
-                            }).join(", ") || '';
+                            /*  // 감독 정보 파싱
+                              var directorsNames = movie.directorsList.map(function(director) {
+                                  return director.peopleNm;
+                              }).join(", ") || '';
 
-                            // 제작사 정보 파싱
-                            var companiesNames = movie.companiesList.map(function(company) {
-                                return company.companyNm;
-                            }).join(", ") || '';*/
+                              // 제작사 정보 파싱
+                              var companiesNames = movie.companiesList.map(function(company) {
+                                  return company.companyNm;
+                              }).join(", ") || '';*/
 
                             // 개봉일을 YYYY.MM.DD 형식으로 변환하는 코드
                             var formattedOpenDt = movie.openDt.substring(0, 4) + '.' +
@@ -194,24 +144,39 @@
                         });
                     }
                 },
-               error : function(xhr, status, error) {
-                   console.error("Error fetching movies:", status, error);
-               }
+                error: function (xhr, status, error) {
+                    console.error("Error fetching movies:", status, error);
+                }
             });
         }
 
+        // fetchMovies 함수 외부에 있어야한다
+        // 이전 페이지 버튼
+        $('#prev-page').click(function () {
+            if (currentPage > 1) {
+                handlePaginationClick(currentPage - 1);
+            }
+        });
+
+        // 다음 페이지 버튼
+        $('#next-page').click(function () {
+            if (currentPage < totalPages) {
+                handlePaginationClick(currentPage + 1);
+            }
+        });
+
         // 페이지 로드 시 영화 목록을 바로 가져온다
-        fetchMovies();
+        fetchMovies(currentPage, pageSize);
 
         //조회 버튼 클릭시 이벤트 바인딩 todo :
-        $('.search-container button').click(function() {
+        $('.search-container button').click(function () {
             fetchMovies();
         });
 
         // 초기화 버튼 클릭시 todo :
 
         // 정렬 드롭다운 변경 이벤트 todo :
-        $('#sorting').change(function() {
+        $('#sorting').change(function () {
             // 여기서 선택된 정렬 옵션에 따라 fetchMovies를 호출
         });
 
