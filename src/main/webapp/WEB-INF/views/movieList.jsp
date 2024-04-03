@@ -90,35 +90,48 @@
         var pageSize = 10; // 페이지당 영화 수
         var totalPages = 0; // 총 페이지 수
 
-        //정렬 옵셥 추가 함수
-        /*   function getSortingOption() {
-               return $('sorting').val();
-           }*/
+        // 정렬 드롭다운 변경 이벤트
+        $('#sorting').change(function () {
+            // 저장된 검색 조건과 현재 선택된 정렬 옵션으로 영화 목록을 다시 가져옵니다.
+            fetchMovies(currentPage, pageSize, $(this).val(), currentSearchConditions.movieName, currentSearchConditions.directorName, currentSearchConditions.productionYear, currentSearchConditions.openDateStart, currentSearchConditions.openDateEnd);
+        })
 
         //페이지네이션 버튼 이벤트 핸들러
         function handlePaginationClick(newPage) {
             currentPage = newPage;
-            fetchMovies(currentPage, pageSize); // 현재 페이지 + 페이지당 영화 수
+
+            //현재 검색 및 정렬 조건을 유지하면서 새 페이지의 영화 목록을 가져옵니다.
+            fetchMovies(currentPage, pageSize, $('#sorting').val(), currentSearchConditions.movieName, currentSearchConditions.directorName, currentSearchConditions.productionYear, currentSearchConditions.openDateStart, currentSearchConditions.openDateEnd);
+        }
+
+        //검색 조건을 저장할 변수를 전역으로 선언
+        var currentSearchConditions = {
+            movieName: '',
+            directorName: '',
+            productionYear: '',
+            openDateStart: '',
+            openDateEnd: '',
         }
 
         // 조회 버튼 클릭 이벤트
         $('#search-button').click(function () {
-            var movieName = $('#movie-name').val();
-            var directorName = $('#director-name').val();
-            var productionYear = $('#production-year').val();
-            var openDateStart = formatDateToDb($('#release-date-start').val());
-            var openDateEnd = formatDateToDb($('#release-date-end').val());
-            console.log(openDateStart);
-            console.log(openDateEnd);
+            currentSearchConditions.movieName = $('#movie-name').val();
+            currentSearchConditions.directorName = $('#director-name').val();
+            currentSearchConditions.productionYear = $('#production-year').val();
+            currentSearchConditions.openDateStart = formatDateToDb($('#release-date-start').val());
+            currentSearchConditions.openDateEnd = formatDateToDb($('#release-date-end').val());
 
-            // 첫 페이지부터 조회를 시작
-            fetchMovies(1, pageSize, movieName, directorName, productionYear, openDateStart, openDateEnd);
+
+            // 첫 페이지부터 조회를 시작합니다. 여기서 currentSearchConditions 객체를 사용합니다.
+            fetchMovies(1, pageSize, $('#sorting').val(), currentSearchConditions.movieName, currentSearchConditions.directorName, currentSearchConditions.productionYear, currentSearchConditions.openDateStart, currentSearchConditions.openDateEnd);
         })
 
-        function fetchMovies(page, size, movieName = '', directorName = '', productionYear = '', releaseDate = '', openDateStart = '', openDateEnd = '') {
+        // 영화 데이터 불러오는 함수
+        function fetchMovies(page, size, sortOption , movieName = '', directorName = '', productionYear = '', releaseDate = '', openDateStart = '', openDateEnd = '') {
             var queryData = {
                 page: page,
                 size: size,
+                sort: sortOption, // 정렬 옵션을 queryData에 추가
                 movieName: movieName,
                 directorName: directorName,
                 productionYear: productionYear,
@@ -186,14 +199,27 @@
 
         // 초기화 버튼 클릭 이벤트
         $('#reset-button').click(function () {
+            // 모든 입력 필드 초기화
             $('#movie-name').val('');
             $('#director-name').val('');
             $('#production-year').val('');
             $('#release-date-start').val('');
             $('#release-date-end').val('');
 
+            // 검색 조건 및 정렬 조건 초기화
+            currentSearchConditions = {
+                movieName: '',
+                directorName: '',
+                productionYear: '',
+                openDateStart: '',
+                openDateEnd: '',
+            };
+            $('#sorting').val('update'); // 드롭다운을 '최신업데이트순'으로 설정
+            currentPage = 1; //현재 페이지를 1로 설정
+            $('#current-page').text(currentPage) // 페이지네이션을 첫 페이지로 업데이트
+
             // 필터 없이 첫 페이지부터 다시 로드
-            fetchMovies(1, pageSize);
+            fetchMovies(currentPage, pageSize , 'update');
         });
 
         // fetchMovies 함수 외부에 있어야한다
@@ -214,21 +240,9 @@
         // 페이지 로드 시 첫 페이지의 영화 목록을 바로 가져온다
         fetchMovies(currentPage, pageSize);
 
-        //정렬 드롭다운 변경 이벤트
-        $('#sorting').change(function () {
-            fetchMovies(currentPage, pageSize, getSortingOption()); // / 변경된 정렬 옵션을 fetchMovies 함수에 전달
-        });
-
         //조회 버튼 클릭시 이벤트 바인딩 todo :
         $('.search-container button').click(function () {
             fetchMovies();
-        });
-
-        // 초기화 버튼 클릭시 todo :
-
-        // 정렬 드롭다운 변경 이벤트 todo :
-        $('#sorting').change(function () {
-            // 여기서 선택된 정렬 옵션에 따라 fetchMovies를 호출
         });
 
     });

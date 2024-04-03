@@ -95,7 +95,20 @@
         <if test="params.openDtEnd != null and params.openDtEnd != ''">
             AND openDt <![CDATA[ <= ]]> #{params.openDtEnd}
         </if>
-        ORDER BY openDt DESC , movieCd ASC
+        <choose>
+            <when test="params.sort == 'year'">
+                ORDER BY prdtYear DESC, movieCd ASC
+            </when>
+            <when test="params.sort == 'name'">
+                ORDER BY movieNm ASC, movieCd ASC
+            </when>
+            <when test="params.sort == 'release'">
+                ORDER BY openDt DESC, movieCd ASC
+            </when>
+            <otherwise>
+                ORDER BY openDt DESC, movieCd ASC
+            </otherwise>
+        </choose>
         LIMIT #{params.limit} OFFSET #{params.offset}
     </select>
 
