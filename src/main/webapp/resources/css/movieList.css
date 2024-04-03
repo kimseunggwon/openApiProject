@@ -93,7 +93,6 @@ th {
 /* 추가된 CSS 스타일 */
 h1 {
     text-align: center; /* 제목 가운데 정렬 */
-
 }
 
 .search-container button {
@@ -107,3 +106,32 @@ h1 {
     text-align: right;
 }
 
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.title {
+    margin: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.box-office-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.box-office-button:hover {
+    background-color: #45a049;
+}
+
+/* Rest of your CSS */

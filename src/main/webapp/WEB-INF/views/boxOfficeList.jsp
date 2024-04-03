@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/mainMovie.css?v=20231121">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/boxOffice.css?v=20231121">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +14,11 @@
 <div class="title-container">
     <h1 class="main-title">박스오피스 조회</h1>
 </div>
+
+<div class="title-container1">
+  <a href="${pageContext.request.contextPath}/main/movieList.do">영화목록 보러가기</a>
+</div>
+
 
 
 <div class="container">

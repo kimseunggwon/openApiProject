@@ -110,6 +110,7 @@ public class MovieApiController {
             @RequestParam(required = false) String productionYear,
             @RequestParam(required = false) String openDateStart,
             @RequestParam(required = false) String openDateEnd,
+            @RequestParam(required = false) String sort, // 정렬 옵션 매개변수*/
             @RequestParam(defaultValue = "1") int page, // 현재 페이지 번호
             @RequestParam(defaultValue = "10") int size) { // 페이지당 보여줄 항목 수
 
@@ -121,6 +122,7 @@ public class MovieApiController {
         params.put("prdtYear", productionYear);
         params.put("openDtStart", openDateStart);
         params.put("openDtEnd", openDateEnd);
+        params.put("sort",sort);
         params.put("offset", offset);
         params.put("limit", size);
         log.info("size = {} " , size);
@@ -128,6 +130,7 @@ public class MovieApiController {
         log.info("params = {} " , params);
         log.info("openDateStart" + openDateStart);
         log.info("openDateEnd" + openDateEnd);
+        log.info("sort = {}" , sort);
 
 
         List<MovieListDto> movies = movieSearchList.searchMovieList(params);

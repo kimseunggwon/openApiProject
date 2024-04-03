@@ -95,7 +95,7 @@
         <if test="params.openDtEnd != null and params.openDtEnd != ''">
             AND openDt <![CDATA[ <= ]]> #{params.openDtEnd}
         </if>
-        ORDER BY openDt DESC
+        ORDER BY openDt DESC , movieCd ASC
         LIMIT #{params.limit} OFFSET #{params.offset}
     </select>
 

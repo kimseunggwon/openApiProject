@@ -65,6 +65,13 @@ tr:nth-child(even) {
     padding: 20px 0;
 }
 
+.title-container1 {
+    background-color:#4CAF50;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
 .main-title {
     margin: 0;
     /* Add any specific styles for the main title */

@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -8,16 +10,25 @@
     <title>영화 목록</title>
 </head>
 <body>
-<h1>영화정보</h1>
+
+<div class="header-container">
+    <h1 class="title">영화정보</h1>
+    <%--<a id="box-office-button" class="box-office-button" href="http://localhost:8080/main/boxOfficeList.do">박스오피스 보러가기</a>--%>
+    <a id="box-office-button" class="box-office-button" href="${pageContext.request.contextPath}/main/boxOfficeList.do">박스오피스
+        보러가기</a>
+</div>
+
 <div class="container">
     <div class="search-container">
         <input type="text" id="movie-name" placeholder="영화명">
         <input type="text" id="director-name" placeholder="감독명">
         <input type="text" id="production-year" placeholder="제작연도">
         <!-- 개봉일자 시작일 -->
-        <input type="text" id="release-date-start" class="date-input" onfocus="this.type='date'" onblur="this.type='text'" placeholder="시작 일자">
+        <input type="text" id="release-date-start" class="date-input" onfocus="this.type='date'"
+               onblur="this.type='text'" placeholder="시작 일자">
         <!-- 개봉일자 종료일 -->
-        <input type="text" id="release-date-end" class="date-input" onfocus="this.type='date'" onblur="this.type='text'" placeholder="종료 일자">
+        <input type="text" id="release-date-end" class="date-input" onfocus="this.type='date'" onblur="this.type='text'"
+               placeholder="종료 일자">
 
         <div class="button-container">
             <button id="search-button">조회</button>
@@ -79,6 +90,11 @@
         var pageSize = 10; // 페이지당 영화 수
         var totalPages = 0; // 총 페이지 수
 
+        //정렬 옵셥 추가 함수
+        /*   function getSortingOption() {
+               return $('sorting').val();
+           }*/
+
         //페이지네이션 버튼 이벤트 핸들러
         function handlePaginationClick(newPage) {
             currentPage = newPage;
@@ -99,16 +115,16 @@
             fetchMovies(1, pageSize, movieName, directorName, productionYear, openDateStart, openDateEnd);
         })
 
-        function fetchMovies(page, size, movieName = '', directorName = '', productionYear = '', releaseDate = '',openDateStart = '',openDateEnd ='') {
+        function fetchMovies(page, size, movieName = '', directorName = '', productionYear = '', releaseDate = '', openDateStart = '', openDateEnd = '') {
             var queryData = {
-                page : page,
-                size : size,
-                movieName : movieName,
+                page: page,
+                size: size,
+                movieName: movieName,
                 directorName: directorName,
                 productionYear: productionYear,
                 releaseDate: releaseDate,
-                openDateStart : openDateStart,
-                openDateEnd : openDateEnd
+                openDateStart: openDateStart,
+                openDateEnd: openDateEnd
             };
 
             $.ajax({
@@ -138,16 +154,6 @@
                             // 단일 문자열로 결합한다
                             var directorsNames = movie.directorsList.map(director => director.peopleNm).join(", ");
                             var companiesNames = movie.companiesList.map(company => company.companyNm).join(", ");
-
-                            /*  // 감독 정보 파싱
-                              var directorsNames = movie.directorsList.map(function(director) {
-                                  return director.peopleNm;
-                              }).join(", ") || '';
-
-                              // 제작사 정보 파싱
-                              var companiesNames = movie.companiesList.map(function(company) {
-                                  return company.companyNm;
-                              }).join(", ") || '';*/
 
                             // 개봉일을 YYYY.MM.DD 형식으로 변환하는 코드
                             var formattedOpenDt = movie.openDt && movie.openDt.length === 8 ?
@@ -208,6 +214,11 @@
         // 페이지 로드 시 첫 페이지의 영화 목록을 바로 가져온다
         fetchMovies(currentPage, pageSize);
 
+        //정렬 드롭다운 변경 이벤트
+        $('#sorting').change(function () {
+            fetchMovies(currentPage, pageSize, getSortingOption()); // / 변경된 정렬 옵션을 fetchMovies 함수에 전달
+        });
+
         //조회 버튼 클릭시 이벤트 바인딩 todo :
         $('.search-container button').click(function () {
             fetchMovies();
@@ -228,7 +239,14 @@
         return dateString.replace(/-/g, '');
     }
 
-
+    /*   // 박스오피스 이동
+       $(document).ready(function() {
+           // 박스오피스 보러가기 버튼 클릭 이벤트 핸들러
+           $('#box-office-button').click(function() {
+               // boxOfficeList.jsp 페이지로 이동합니다.
+               window.location.href = '/main/boxOfficeList.do';
+           });
+       });*/
 </script>
 
 </body>
