@@ -191,5 +191,26 @@ public class MovieApiCallService {
         return movieListDtos;
     }
 
+    /**
+     * 영화 상세정보 호출 API
+     *  movieCd	문자열(필수) :	영화코드
+     */
+    public ResponseEntity<String> callMovieDetailApi(String movieCd) throws Exception {
+
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder
+                .fromUriString(OpenApiConstants.API_URL_MOVIE_DETAIL)
+                .queryParam("key",OpenApiConstants.API_KEY_LIST)
+                .queryParam("movieCd",movieCd);
+
+        String url = urlBuilder.toUriString();
+        ResponseEntity<String> response = restTemplate.getForEntity(url , String.class);
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw  new Exception("API 호출 실패");
+        }
+        log.info("response.getBody = {}" , response.getBody());
+
+        return response;
+    }
+
 
 }

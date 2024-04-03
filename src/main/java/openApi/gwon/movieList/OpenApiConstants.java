@@ -8,5 +8,7 @@ public class OpenApiConstants {
     public static final String API_URL_DAILY_BOX_OFFICE = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json";
     public static final String API_URL_WEEKLY_BOX_OFFICE = "https://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchWeeklyBoxOfficeList.json";
 
+    public static final String API_URL_MOVIE_DETAIL ="http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json";
+
 
 }

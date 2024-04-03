@@ -143,7 +143,9 @@ public class MovieApiController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/search/movieDetail")
+    public ResponseEntity<String> movieDetail(@RequestParam String movieCd)throws Exception {
 
-
-
+        return movieApiCallService.callMovieDetailApi(movieCd);
+    }
 }
