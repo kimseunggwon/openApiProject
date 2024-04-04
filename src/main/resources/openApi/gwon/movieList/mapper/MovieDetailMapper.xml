@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="openApi.gwon.movieList.mapper.MovieDetailMapper">
+
+    <insert id="saveMovieDetail" parameterType="openApi.gwon.movieList.dto.movieDetail.MovieDetail">
+        INSERT INTO MovieDetails (movieCd, movieNm, movieNmEn, movieNmOg, prdtYear, showTm, openDt, prdtStatNm, typeNm, nationNm, genreNm)
+        VALUES (#{movieCd}, #{movieNm}, #{movieNmEn}, #{movieNmOg}, #{prdtYear}, #{showTm}, #{openDt}, #{prdtStatNm}, #{typeNm}, #{nationNm}, #{genreNm})
+    </insert>
+
+</mapper>

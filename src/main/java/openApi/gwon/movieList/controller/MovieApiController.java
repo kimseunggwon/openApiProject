@@ -149,4 +149,16 @@ public class MovieApiController {
 
         return movieApiCallService.callMovieDetailApi(movieCd);
     }
+
+    @GetMapping("/fetchSave")
+    public ResponseEntity<String> fetchSaveMovieDetails() {
+        try {
+            movieApiCallService.fetchSaveMovieDetails();
+            return ResponseEntity.ok("Movie details fetched and saved successfully.");
+        } catch (Exception e) {
+            log.error("Error fetching movie details: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching movie details.");
+        }
+    }
+
 }

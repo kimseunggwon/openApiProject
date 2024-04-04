@@ -26,5 +26,6 @@ public interface MovieListRepository {
 
     int countMovies(@Param("params") Map<String, Object> params);
 
+    List<String> findAllMovieCodes();
 }
 

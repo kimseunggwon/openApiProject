@@ -134,5 +134,10 @@
     </select>
 
 
+    <select id="findAllMovieCodes" resultType="string">
+        SELECT movieCd FROM MovieList
+    </select>
+
+
 
 </mapper>

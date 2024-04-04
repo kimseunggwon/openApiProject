@@ -56,4 +56,9 @@ public class MovieListImplRepository implements MovieListRepository {
     public int countMovies(Map<String, Object> params) {
         return movieListMapper.countMovies(params);
     }
+
+    @Override
+    public List<String> findAllMovieCodes() {
+        return movieListMapper.findAllMovieCodes();
+    }
 }

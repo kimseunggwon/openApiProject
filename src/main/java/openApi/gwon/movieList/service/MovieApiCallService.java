@@ -10,10 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
 import openApi.gwon.movieList.dto.movieDetail.*;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
+import openApi.gwon.movieList.repository.MovieDetailImplRepository;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,6 +35,8 @@ public class MovieApiCallService {
     private final MovieListImplRepository movieListImplRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+
+    private final MovieDetailImplRepository movieDetailImplRepository;
 
 
     /**
@@ -270,6 +274,50 @@ public class MovieApiCallService {
     private <T extends MovieRelatedEntity> void setMovieCdToRelatedEntities(List<T> entities, String movieCd) {
         for (T entity : entities) {
             entity.setMovieCd(movieCd);
+        }
+    }
+
+    /**
+     *  영화 상세보기 insert 작업
+     *  KEY : MoiveCd
+     */
+    @Transactional
+    public void fetchSaveMovieDetails() {
+
+        // 저장된 영화 코드 추출
+        List<String> movieCodes = movieListImplRepository.findAllMovieCodes().subList(0,10);
+        log.info("Processing movieCodes  = {}" , movieCodes);
+
+        for (String movieCd : movieCodes) {
+            try{
+
+                //각 영화 코드에 대한 상세 정보 조회
+                MovieDetail movieDetail = callMovieDetailApi(movieCd);
+                log.info("movieDetail = {}" , movieDetail);
+
+                // 조회된 영화 상세 정보 저장
+                movieDetailImplRepository.saveMovieDetail(movieDetail); // 영화 기본 정보 저장
+
+                // 관련 엔티티들도 저장
+         /*       for (Actor actor : movieDetail.getActors()) {
+                    actorRepository.save(actor);
+                }
+                for (Company company : movieDetail.getCompanies()) {
+                    companyRepository.save(company);
+                }
+                for (ShowType showType : movieDetail.getShowTypes()) {
+                    showTypeRepository.save(showType);
+                }
+                for (Staff staff : movieDetail.getStaffs()) {
+                    staffRepository.save(staff);
+                }*/
+
+                // 기타 필요한 엔티티 저장 작업
+
+            } catch (Exception e ) {
+                log.error("Error processing movieCd {}: ", movieCd, e);
+                e.printStackTrace();;
+            }
         }
     }
 
