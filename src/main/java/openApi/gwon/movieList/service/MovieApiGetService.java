@@ -7,16 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
-import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
-import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
+import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
-import org.springframework.cglib.core.Local;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

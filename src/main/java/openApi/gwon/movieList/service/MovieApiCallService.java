@@ -1,13 +1,15 @@
 package openApi.gwon.movieList.service;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jdk.security.jarsigner.JarSignerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
-import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.dto.movieDetail.*;
+import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -195,7 +197,7 @@ public class MovieApiCallService {
      * 영화 상세정보 호출 API
      *  movieCd	문자열(필수) :	영화코드
      */
-    public ResponseEntity<String> callMovieDetailApi(String movieCd) throws Exception {
+    public MovieDetail callMovieDetailApi(String movieCd) throws Exception {
 
         UriComponentsBuilder urlBuilder = UriComponentsBuilder
                 .fromUriString(OpenApiConstants.API_URL_MOVIE_DETAIL)
@@ -209,7 +211,66 @@ public class MovieApiCallService {
         }
         log.info("response.getBody = {}" , response.getBody());
 
-        return response;
+        // ObjectMapper 인스턴스 생성
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = response.getBody();
+        JsonNode rootNode = objectMapper.readTree(responseBody);
+
+        // 영화 상세 정보 추출
+        JsonNode movieInfoNode = rootNode.path("movieInfoResult").path("movieInfo");
+        MovieDetail movieDetail = objectMapper.treeToValue(movieInfoNode, MovieDetail.class);
+        log.info("movieDetail = {}" , movieDetail);
+
+        // 관련된 DTO를 리스트로 추출
+        List<Actor> actors = objectMapper.readValue(
+                movieInfoNode.path("actors").toString(),
+                new TypeReference<List<Actor>>() {}
+
+        );
+
+        List<Company> companies = objectMapper.readValue(
+                movieInfoNode.path("companys").toString(),
+                new TypeReference<List<Company>>() {}
+        );
+
+        List<ShowType> showTypes = objectMapper.readValue(
+                movieInfoNode.path("showTypes").toString(),
+                new TypeReference<List<ShowType>>(){}
+        );
+
+        List<Staff> staffs = objectMapper.readValue(
+                movieInfoNode.path("staffs").toString(),
+                new TypeReference<List<Staff>>(){}
+        );
+
+        // MovieDetail 객체 movieCd 공유
+        String movieCode = movieDetail.getMovieCd();
+
+        setMovieCdToRelatedEntities(actors,movieCode);
+        setMovieCdToRelatedEntities(companies, movieCode);
+        setMovieCdToRelatedEntities(showTypes, movieCode);
+        setMovieCdToRelatedEntities(staffs, movieCode);
+
+        movieDetail.setActors(actors);
+        movieDetail.setCompanies(companies);
+        movieDetail.setShowTypes(showTypes);
+        movieDetail.setStaffs(staffs);
+        log.info("actors = {}" , actors);
+        log.info("companies = {}" , companies);
+        log.info("showTypes = {}" , showTypes);
+        log.info("staffs = {}" , staffs);
+
+        return movieDetail;
+    }
+
+
+    // Actor, Company, ShowType, Staff 클래스들의 객체는 모두 MovieDetail 객체에 연관된 객체로 같은 영화 코드를 공유해야한다.
+    // 문제는 ObjectMapper를 사용하여 JSON 응답을 Actor 객체 리스트로 직접 변환하려고 할 때 movieCd 값이 자동으로 설정되지 않는다는 것 ( 최상위에 있는 MovieDetail에서만 제공된다 )
+    // 이를 해결하려면, Actor 리스트를 생성한 후 각 Actor 객체에 영화 코드를 수동으로 설정해 주어한다
+    private <T extends MovieRelatedEntity> void setMovieCdToRelatedEntities(List<T> entities, String movieCd) {
+        for (T entity : entities) {
+            entity.setMovieCd(movieCd);
+        }
     }
 
 

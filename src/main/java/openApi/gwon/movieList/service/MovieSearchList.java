@@ -5,13 +5,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import openApi.gwon.movieList.dto.MovieList.Company;
-import openApi.gwon.movieList.dto.MovieList.Directors;
-import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.dto.movieList.Company;
+import openApi.gwon.movieList.dto.movieList.Directors;
+import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

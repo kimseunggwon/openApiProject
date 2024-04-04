@@ -1,7 +1,7 @@
 package openApi.gwon.movieList.repository;
 
-import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
-import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
+import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package openApi.gwon.movieList.dto.MovieList;
+package openApi.gwon.movieList.dto.movieList;
 
 import lombok.Data;
 

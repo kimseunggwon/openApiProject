@@ -5,13 +5,13 @@
 
 <mapper namespace="openApi.gwon.movieList.mapper.MovieListMapper">
 
-    <select id="findByCd" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
+    <select id="findByCd" resultType="openApi.gwon.movieList.dto.movieList.MovieListDto">
         SELECT *
         FROM MovieList
         WHERE MOVIECD = #{movieCd}
     </select>
 
-    <select id="findAll" parameterType="string" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
+    <select id="findAll" parameterType="string" resultType="openApi.gwon.movieList.dto.movieList.MovieListDto">
         SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
         FROM MovieList
     </select>
@@ -21,7 +21,7 @@
 
     </select>
 
-    <select id="findByMovieCd" parameterType="string" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
+    <select id="findByMovieCd" parameterType="string" resultType="openApi.gwon.movieList.dto.movieList.MovieListDto">
         SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
         FROM MovieList
         WHERE movieNm = #{movieNm}
@@ -65,7 +65,7 @@
         </foreach>
     </insert>
 
-    <select id="findByDailyBoxOfficeDt" parameterType="string" resultType="openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto">
+    <select id="findByDailyBoxOfficeDt" parameterType="string" resultType="openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto">
         SELECT
             dailyBoxOfficeId, rnum, rank, rankInten, rankOldAndNew,
             movieCd, movieNm, openDt, salesAmt, salesShare,
@@ -76,7 +76,7 @@
     </select>
 
 
-    <select id="searchMovieList" parameterType="map" resultType="openApi.gwon.movieList.dto.MovieList.MovieListDto">
+    <select id="searchMovieList" parameterType="map" resultType="openApi.gwon.movieList.dto.movieList.MovieListDto">
         SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
         FROM MovieList
         WHERE 1=1

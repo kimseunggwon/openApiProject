@@ -1,8 +1,8 @@
 package openApi.gwon.movieList.repository;
 
 import lombok.RequiredArgsConstructor;
-import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
-import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
+import openApi.gwon.movieList.dto.movieList.MovieListDto;
 
 import openApi.gwon.movieList.mapper.MovieListMapper;
 import org.springframework.stereotype.Repository;

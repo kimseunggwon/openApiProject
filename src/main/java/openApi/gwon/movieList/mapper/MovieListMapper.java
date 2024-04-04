@@ -1,12 +1,11 @@
 package openApi.gwon.movieList.mapper;
 
-import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
-import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
+import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

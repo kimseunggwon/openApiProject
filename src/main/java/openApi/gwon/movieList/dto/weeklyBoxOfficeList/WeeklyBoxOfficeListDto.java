@@ -1,4 +1,4 @@
-package openApi.gwon.movieList.dto.WeeklyBoxOfficeList;
+package openApi.gwon.movieList.dto.weeklyBoxOfficeList;
 
 import lombok.Data;
 

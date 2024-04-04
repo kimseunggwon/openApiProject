@@ -4,8 +4,9 @@ package openApi.gwon.movieList.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import openApi.gwon.movieList.dto.DailyBoxOfficeList.DailyBoxOfficeListDto;
-import openApi.gwon.movieList.dto.MovieList.MovieListDto;
+import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
+import openApi.gwon.movieList.dto.movieDetail.MovieDetail;
+import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.service.MovieApiCallService;
 import openApi.gwon.movieList.service.MovieApiGetService;
 import openApi.gwon.movieList.service.MovieSearchList;
@@ -144,7 +145,7 @@ public class MovieApiController {
     }
 
     @GetMapping("/search/movieDetail")
-    public ResponseEntity<String> movieDetail(@RequestParam String movieCd)throws Exception {
+    public MovieDetail movieDetail(@RequestParam String movieCd)throws Exception {
 
         return movieApiCallService.callMovieDetailApi(movieCd);
     }
