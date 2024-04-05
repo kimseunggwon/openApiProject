@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true) // 알려지지 않은 속성을 무시하도록 설정 ( nations = 국가 )
-public class MovieDetail {
+public class MovieDetailDto {
     private String movieCd;
     private String movieNm;
     private String movieNmEn;
@@ -17,8 +17,8 @@ public class MovieDetail {
     private String openDt;
     private String prdtStatNm;
     private String typeNm;
-    private String nationNm;
-    private String genreNm;
+    private String nationNm;  // "nations":[{"nationNm":"독일"}] // 독일
+    private String genreNm;  // "genres":[{"genreNm":"전쟁"},{"genreNm":"드라마"}] // 전쟁 , 드라마
     private List<Actor> actors;
     private List<Company> companies;
     private List<ShowType> showTypes;

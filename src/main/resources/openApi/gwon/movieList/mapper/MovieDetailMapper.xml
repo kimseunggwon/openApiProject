@@ -5,9 +5,35 @@
 
 <mapper namespace="openApi.gwon.movieList.mapper.MovieDetailMapper">
 
-    <insert id="saveMovieDetail" parameterType="openApi.gwon.movieList.dto.movieDetail.MovieDetail">
+    <!-- movieDetail 테이블에 데이터 삽입 -->
+    <insert id="saveMovieDetail" parameterType="openApi.gwon.movieList.dto.movieDetail.MovieDetailDto">
         INSERT INTO MovieDetails (movieCd, movieNm, movieNmEn, movieNmOg, prdtYear, showTm, openDt, prdtStatNm, typeNm, nationNm, genreNm)
         VALUES (#{movieCd}, #{movieNm}, #{movieNmEn}, #{movieNmOg}, #{prdtYear}, #{showTm}, #{openDt}, #{prdtStatNm}, #{typeNm}, #{nationNm}, #{genreNm})
     </insert>
+
+    <!-- saveActor 테이블에 데이터 삽입 -->
+    <insert id="saveActor" parameterType="openApi.gwon.movieList.dto.movieDetail.Actor">
+        INSERT INTO Actors (movieCd, peopleNm, peopleNmEn, castName, castEn)
+        VALUES (#{movieCd}, #{peopleNm}, #{peopleNmEn}, #{castName}, #{castEn})
+    </insert>
+
+    <!-- Company 테이블에 데이터 삽입 -->
+    <insert id="saveCompany" parameterType="openApi.gwon.movieList.dto.movieDetail.Company">
+        INSERT INTO Companies (movieCd, companyCd, companyNm, companyNmEn, companyPartNm)
+        VALUES (#{movieCd}, #{companyCd}, #{companyNm}, #{companyNmEn}, #{companyPartNm})
+    </insert>
+
+    <!-- ShowType 테이블에 데이터 삽입 -->
+    <insert id="saveShowType" parameterType="openApi.gwon.movieList.dto.movieDetail.ShowType">
+        INSERT INTO ShowTypes (movieCd, showTypeGroupNm, showTypeNm, auditNo, watchGradeNm)
+        VALUES (#{movieCd}, #{showTypeGroupNm}, #{showTypeNm}, #{auditNo}, #{watchGradeNm})
+    </insert>
+
+    <!-- Staff 테이블에 데이터 삽입 -->
+    <insert id="saveStaff" parameterType="openApi.gwon.movieList.dto.movieDetail.Staff">
+        INSERT INTO Staffs (movieCd, peopleNm, peopleNmEn, staffRoleNm)
+        VALUES (#{movieCd}, #{peopleNm}, #{peopleNmEn}, #{staffRoleNm})
+    </insert>
+
 
 </mapper>

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
-import openApi.gwon.movieList.dto.movieDetail.MovieDetail;
+import openApi.gwon.movieList.dto.movieDetail.MovieDetailDto;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.service.MovieApiCallService;
 import openApi.gwon.movieList.service.MovieApiGetService;
@@ -145,7 +145,7 @@ public class MovieApiController {
     }
 
     @GetMapping("/search/movieDetail")
-    public MovieDetail movieDetail(@RequestParam String movieCd)throws Exception {
+    public MovieDetailDto movieDetail(@RequestParam String movieCd)throws Exception {
 
         return movieApiCallService.callMovieDetailApi(movieCd);
     }

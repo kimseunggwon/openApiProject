@@ -97,14 +97,15 @@ public class MovieApiCallService {
         }
     }
 
-    /** 영화목록 조회 API 서비스
+    /**
+     * 영화목록 조회 API 서비스
      */
     public List<MovieListDto> callMovieListApi() throws Exception {
         final int ITEMS_PER_PAGE = 10; // 한 페이지에 요청할 영화의 개수를 지정
         final int MAX_ITEMS = 1000;
         List<MovieListDto> allMovies = new ArrayList<>();
 
-       // String firstPageUrl = buildUrl(1, ITEMS_PER_PAGE).toUriString();
+        // String firstPageUrl = buildUrl(1, ITEMS_PER_PAGE).toUriString();
         //log.info("firstPageUrl" + firstPageUrl);
         //ResponseEntity<String> firstResponse = restTemplate.getForEntity(firstPageUrl, String.class);
         //log.info("firstResponse" + firstResponse);
@@ -115,7 +116,7 @@ public class MovieApiCallService {
         //int totalPages = (int)Math.ceil((double)totalItems / ITEMS_PER_PAGE);
         //log.info("totalPages" + totalPages);
 
-        int totalPages = (int) Math.ceil((double)MAX_ITEMS / ITEMS_PER_PAGE); // 500 / 10 => 10개씩 50 페이지 => 총 500개
+        int totalPages = (int) Math.ceil((double) MAX_ITEMS / ITEMS_PER_PAGE); // 500 / 10 => 10개씩 50 페이지 => 총 500개
         log.info("totalPages aa" + totalPages);
 
         // ITEMS_PER_PAGE = 한 페이지에 10개씩 , page = 5개면 , 총 50개
@@ -141,13 +142,13 @@ public class MovieApiCallService {
         return UriComponentsBuilder
                 .fromUriString(OpenApiConstants.API_URL_MOVIE_LIST)
                 .queryParam("key", OpenApiConstants.API_KEY_LIST)
-                .queryParam("curPage" , currentPage)
-                .queryParam("itmPerPage" , itemsPerPage);
+                .queryParam("curPage", currentPage)
+                .queryParam("itmPerPage", itemsPerPage);
     }
 
-    private int extractTotalCount (String responseBody) throws Exception {
+    private int extractTotalCount(String responseBody) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        HashMap<String,Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
+        HashMap<String, Object> resultMap = objectMapper.readValue(responseBody, HashMap.class);
         HashMap<String, Object> movieListResult = (HashMap<String, Object>) resultMap.get("movieListResult");
         if (movieListResult != null) { // movieListResult 가 null 이 아닐 때만 접근
             return (Integer) movieListResult.get("totCnt");
@@ -199,21 +200,22 @@ public class MovieApiCallService {
 
     /**
      * 영화 상세정보 호출 API
-     *  movieCd	문자열(필수) :	영화코드
+     * movieCd	문자열(필수) :	영화코드
      */
-    public MovieDetail callMovieDetailApi(String movieCd) throws Exception {
+    @Transactional
+    public MovieDetailDto callMovieDetailApi(String movieCd) throws Exception {
 
         UriComponentsBuilder urlBuilder = UriComponentsBuilder
                 .fromUriString(OpenApiConstants.API_URL_MOVIE_DETAIL)
-                .queryParam("key",OpenApiConstants.API_KEY_LIST)
-                .queryParam("movieCd",movieCd);
+                .queryParam("key", OpenApiConstants.API_KEY_LIST)
+                .queryParam("movieCd", movieCd);
 
         String url = urlBuilder.toUriString();
-        ResponseEntity<String> response = restTemplate.getForEntity(url , String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-            throw  new Exception("API 호출 실패");
+            throw new Exception("API 호출 실패");
         }
-        log.info("response.getBody = {}" , response.getBody());
+        log.info("response.getBody = {}", response.getBody());
 
         // ObjectMapper 인스턴스 생성
         ObjectMapper objectMapper = new ObjectMapper();
@@ -222,35 +224,59 @@ public class MovieApiCallService {
 
         // 영화 상세 정보 추출
         JsonNode movieInfoNode = rootNode.path("movieInfoResult").path("movieInfo");
-        MovieDetail movieDetail = objectMapper.treeToValue(movieInfoNode, MovieDetail.class);
-        log.info("movieDetail = {}" , movieDetail);
+        MovieDetailDto movieDetail = objectMapper.treeToValue(movieInfoNode, MovieDetailDto.class);
+        log.info("movieDetail = {}", movieDetail);
 
         // 관련된 DTO를 리스트로 추출
         List<Actor> actors = objectMapper.readValue(
                 movieInfoNode.path("actors").toString(),
-                new TypeReference<List<Actor>>() {}
+                new TypeReference<List<Actor>>() {
+                }
 
         );
 
         List<Company> companies = objectMapper.readValue(
                 movieInfoNode.path("companys").toString(),
-                new TypeReference<List<Company>>() {}
+                new TypeReference<List<Company>>() {
+                }
         );
 
         List<ShowType> showTypes = objectMapper.readValue(
                 movieInfoNode.path("showTypes").toString(),
-                new TypeReference<List<ShowType>>(){}
+                new TypeReference<List<ShowType>>() {
+                }
         );
 
         List<Staff> staffs = objectMapper.readValue(
                 movieInfoNode.path("staffs").toString(),
-                new TypeReference<List<Staff>>(){}
+                new TypeReference<List<Staff>>() {
+                }
         );
+
+        //배열 JSON 형태 필드 값을 추출하여 문자열로 결합  = "nations":[{"nationNm":"독일"}] , "genres":[{"genreNm":"전쟁"},{"genreNm":"드라마"}]
+        JsonNode nationsNode = movieInfoNode.path("nations");
+        StringBuilder nationNamesBuilder = new StringBuilder();
+        for (JsonNode nationNode : nationsNode) {
+            if (nationNamesBuilder.length() > 0) nationNamesBuilder.append(",");
+            nationNamesBuilder.append(nationNode.path("nationNm").asText());
+        }
+        movieDetail.setNationNm(nationNamesBuilder.toString());
+        //log.info("setNationNm = {}" , movieDetail.getNationNm());
+
+        JsonNode genresNode = movieInfoNode.path("genres");
+        StringBuilder genreNamesBuilder = new StringBuilder();
+        for (JsonNode genreNode : genresNode) {
+            if (genreNamesBuilder.length() > 0) genreNamesBuilder.append(", ");
+            genreNamesBuilder.append(genreNode.path("genreNm").asText());
+        }
+        movieDetail.setGenreNm(genreNamesBuilder.toString());
+        //log.info("setGenreNm = {}" , movieDetail.getGenreNm());
+
 
         // MovieDetail 객체 movieCd 공유
         String movieCode = movieDetail.getMovieCd();
 
-        setMovieCdToRelatedEntities(actors,movieCode);
+        setMovieCdToRelatedEntities(actors, movieCode);
         setMovieCdToRelatedEntities(companies, movieCode);
         setMovieCdToRelatedEntities(showTypes, movieCode);
         setMovieCdToRelatedEntities(staffs, movieCode);
@@ -259,10 +285,10 @@ public class MovieApiCallService {
         movieDetail.setCompanies(companies);
         movieDetail.setShowTypes(showTypes);
         movieDetail.setStaffs(staffs);
-        log.info("actors = {}" , actors);
-        log.info("companies = {}" , companies);
-        log.info("showTypes = {}" , showTypes);
-        log.info("staffs = {}" , staffs);
+        log.info("actors = {}", actors);
+        log.info("companies = {}", companies);
+        log.info("showTypes = {}", showTypes);
+        log.info("staffs = {}", staffs);
 
         return movieDetail;
     }
@@ -278,45 +304,53 @@ public class MovieApiCallService {
     }
 
     /**
-     *  영화 상세보기 insert 작업
-     *  KEY : MoiveCd
+     * 영화 상세보기 insert 작업
+     * KEY : MoiveCd
      */
     @Transactional
     public void fetchSaveMovieDetails() {
 
-        // 저장된 영화 코드 추출
-        List<String> movieCodes = movieListImplRepository.findAllMovieCodes().subList(0,10);
-        log.info("Processing movieCodes  = {}" , movieCodes);
+        // 저장된 영화 코드 추출 ( 테스트 movieCode 10개만 우선 )
+        //List<String> movieCodes = movieListImplRepository.findAllMovieCodes().subList(0, 10);
+        List<String> movieCodes = movieListImplRepository.findAllMovieCodes();
+        log.info("Processing movieCodes  = {}", movieCodes);
 
+        // todo : 중복 데이터 처리
         for (String movieCd : movieCodes) {
-            try{
+            try {
 
-                //각 영화 코드에 대한 상세 정보 조회
-                MovieDetail movieDetail = callMovieDetailApi(movieCd);
-                log.info("movieDetail = {}" , movieDetail);
+                //각 영화 코드에 대한 전체 영화 상세 정보 조회
+                MovieDetailDto movieDetail = callMovieDetailApi(movieCd);
+                log.info("movieCd 에 대한 movieDetail = {}", movieDetail);
 
                 // 조회된 영화 상세 정보 저장
                 movieDetailImplRepository.saveMovieDetail(movieDetail); // 영화 기본 정보 저장
 
                 // 관련 엔티티들도 저장
-         /*       for (Actor actor : movieDetail.getActors()) {
-                    actorRepository.save(actor);
+                for (Actor actor : movieDetail.getActors()) {
+                    movieDetailImplRepository.saveActor(actor);
+                    log.info("actor save  = {} " , actor);
                 }
-                for (Company company : movieDetail.getCompanies()) {
-                    companyRepository.save(company);
-                }
-                for (ShowType showType : movieDetail.getShowTypes()) {
-                    showTypeRepository.save(showType);
-                }
-                for (Staff staff : movieDetail.getStaffs()) {
-                    staffRepository.save(staff);
-                }*/
 
+                for (Company company : movieDetail.getCompanies()) {
+                    movieDetailImplRepository.saveCompany(company);
+                    log.info("company save  = {} " , company);
+                }
+
+                for (ShowType showType : movieDetail.getShowTypes()) {
+                    movieDetailImplRepository.saveShowType(showType);
+                    log.info("showType save  = {} " , showType);
+                }
+
+                for (Staff staff : movieDetail.getStaffs()) {
+                    movieDetailImplRepository.saveStaff(staff);
+                    log.info("staff save  = {} " , staff);
+                }
                 // 기타 필요한 엔티티 저장 작업
 
-            } catch (Exception e ) {
+            } catch (Exception e) {
                 log.error("Error processing movieCd {}: ", movieCd, e);
-                e.printStackTrace();;
+                e.printStackTrace();
             }
         }
     }

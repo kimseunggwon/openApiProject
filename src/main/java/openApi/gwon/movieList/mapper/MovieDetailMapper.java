@@ -1,6 +1,6 @@
 package openApi.gwon.movieList.mapper;
 
-import openApi.gwon.movieList.dto.movieDetail.MovieDetail;
+import openApi.gwon.movieList.dto.movieDetail.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
@@ -9,5 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 public interface MovieDetailMapper {
 
-    void saveMovieDetail(MovieDetail movieDetail);
+    void saveMovieDetail(MovieDetailDto movieDetail);
+
+    void saveActor(Actor actor);
+
+    void saveCompany(Company company);
+    void saveShowType(ShowType showType);
+    void saveStaff(Staff staff);
 }
