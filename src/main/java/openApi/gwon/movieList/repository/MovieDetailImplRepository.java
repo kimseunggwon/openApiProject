@@ -35,4 +35,10 @@ public class MovieDetailImplRepository implements MovieDetailRepository{
     public void saveStaff(Staff staff) {
         movieDetailMapper.saveStaff(staff);
     }
+
+    @Override
+    public MovieDetailDto findMovieDetailByMovieCd(String movieCd) {
+        return movieDetailMapper.findMovieDetailByMovieCd(movieCd);
+    }
+
 }

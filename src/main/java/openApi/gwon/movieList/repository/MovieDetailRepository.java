@@ -12,4 +12,6 @@ public interface MovieDetailRepository {
     void saveCompany(Company company);
     void saveShowType(ShowType showType);
     void saveStaff(Staff staff);
+
+    MovieDetailDto findMovieDetailByMovieCd(String movieCd);
 }

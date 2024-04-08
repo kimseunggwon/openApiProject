@@ -21,10 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -354,6 +352,55 @@ public class MovieApiCallService {
             }
         }
     }
+
+    /**
+     * 영화 상세정보 호출 API
+     * movieCd	문자열(필수) :	영화코드
+     */
+    public MovieDetailDto getMovieDetailByMovieCd(String movieCd) {
+
+        MovieDetailDto movieDetail =  movieDetailImplRepository.findMovieDetailByMovieCd(movieCd);
+
+        if (movieDetail != null) {
+            // 빈 컬렉션 처리
+            movieDetail.setActors(filterEmpty(movieDetail.getActors()));
+            movieDetail.setCompanies(filterEmpty(movieDetail.getCompanies()));
+            movieDetail.setShowTypes(filterEmpty(movieDetail.getShowTypes()));
+            movieDetail.setStaffs(filterEmpty(movieDetail.getStaffs()));
+
+            return movieDetail;
+        } else {
+            // 조회된 정보가 없다면, 예외 처리나 적절한 로직을 추가 예정
+            throw new RuntimeException("영화 상세 정보를 찾을 수 없습니다. 영화 코드: " + movieCd);
+        }
+    }
+
+    private <T> List<T> filterEmpty(List<T> list) {
+        return list.stream()
+                .filter(Objects::nonNull)
+                .filter(item -> !isEmpty(item))
+                .collect(Collectors.toList());
+    }
+
+    /** null ,empty 처리
+     */
+    private boolean isEmpty(Object object) {
+        if (object instanceof Actor) {
+            Actor actor = (Actor) object;
+            return actor.getPeopleNm() == null && actor.getPeopleNmEn() == null && actor.getCastName() == null && actor.getCastEn() == null;
+        } else if (object instanceof Company) {
+            Company company = (Company) object;
+            return company.getCompanyCd() == null && company.getCompanyNm() == null && company.getCompanyNmEn() == null && company.getCompanyPartNm() == null;
+        } else if (object instanceof ShowType) {
+            ShowType showType = (ShowType) object;
+            return showType.getShowTypeGroupNm() == null && showType.getShowTypeNm() == null && showType.getAuditNo() == null && showType.getWatchGradeNm() == null;
+        } else if (object instanceof Staff) {
+            Staff staff = (Staff) object;
+            return staff.getPeopleNm() == null && staff.getPeopleNmEn() == null && staff.getStaffRoleNm() == null;
+        }
+        return false; // 타입이 매칭되지 않는 경우, 기본적으로는 비어있지 않다고 가정
+    }
+
 
 
 }

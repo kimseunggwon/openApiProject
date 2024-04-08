@@ -161,4 +161,10 @@ public class MovieApiController {
         }
     }
 
+    @GetMapping("/find/movieDetail")
+    public MovieDetailDto getMovieDetailByMovieCd(@RequestParam String movieCd) {
+
+        return movieApiCallService.getMovieDetailByMovieCd(movieCd);
+    }
+
 }
