@@ -56,23 +56,40 @@
 
                 // 배우 목록 추가
                 response.actors.forEach(function(actor) {
-                    $('#actors-list').append($('<li>').text(actor.peopleNm + " (" + actor.peopleNmEn + ")"));
+                    var actorInfo = actor.peopleNm;
+                    if (actor.peopleNmEn) actorInfo += " (" + actor.peopleNmEn + ")";
+                    if (actor.cast || actor.castEn) {
+                        actorInfo += " - 배역 : ";
+                        if (actor.cast) actorInfo += actor.cast;
+                        if (actor.castEn) actorInfo += " (" + actor.castEn + ")";
+                    }
+                    $('#actors-list').append($('<li>').text(actorInfo));
                 });
 
-                // 제작사 목록 추가
+
+// 제작사 목록 추가
                 response.companies.forEach(function(company) {
-                    $('#companies-list').append($('<li>').text(company.companyNm + " (" + company.companyNmEn + ")"));
+                    var companyInfo = company.companyNm;
+                    if (company.companyNmEn) companyInfo += " (" + company.companyNmEn + ")";
+                    $('#companies-list').append($('<li>').text(companyInfo + " - 제작사 코드 : " + company.companyCd));
                 });
 
-                // 상영 유형 목록 추가
+// 상영 유형 목록 추가
                 response.showTypes.forEach(function(showType) {
-                    $('#showtypes-list').append($('<li>').text(showType.showTypeNm));
+                    var showTypeInfo = showType.showTypeGroupNm + " - " + showType.showTypeNm;
+                    if (showType.watchGradeNm) showTypeInfo += " - " + showType.watchGradeNm;
+                    if (showType.auditNo) showTypeInfo += " (" + showType.auditNo + ")";
+                    $('#showtypes-list').append($('<li>').text(showTypeInfo));
                 });
 
-                // 스태프 목록 추가
+// 스태프 목록 추가
                 response.staffs.forEach(function(staff) {
-                    $('#staffs-list').append($('<li>').text(staff.peopleNm + " (" + staff.peopleNmEn + ") - " + staff.staffRoleNm));
+                    var staffInfo = staff.peopleNm;
+                    if (staff.peopleNmEn) staffInfo += " (" + staff.peopleNmEn + ")";
+                    if (staff.staffRoleNm) staffInfo += " - " + staff.staffRoleNm;
+                    $('#staffs-list').append($('<li>').text(staffInfo));
                 });
+
 
             },
             error : function (status , error) {
