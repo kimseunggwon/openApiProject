@@ -173,8 +173,17 @@
                                 movie.openDt.substring(0, 4) + '.' + movie.openDt.substring(4, 6) + '.' + movie.openDt.substring(6, 8) :
                                 ''; // openDt가 유효하지 않으면 빈 문자열을 사용
 
+                            // 영화 제목에 클릭 이벤트를 추가하여 상세 페이지로 리다이렉션할 수 있도록 함
+                            const movieTitleLink = $('<a>')
+                                .attr('href', 'javascript:void(0);')
+                                .text(movie.movieNm)
+                                .on('click', function () {
+                                    // 상세 정보 페이지로 리다이렉트하는 로직
+                                    window.location.href = 'new/movieList/Detail.do?movieCd=' + movie.movieCd;
+                                });
+
                             const tr = $('<tr>').append(
-                                $('<td>').text(movie.movieNm),
+                                $('<td>').append(movieTitleLink),
                                 $('<td>').text(movie.movieNmEn),
                                 $('<td>').text(movie.movieCd),
                                 $('<td>').text(movie.prdtYear),
@@ -187,6 +196,7 @@
                                 $('<td>').text(companiesNames) // companiesJson도 마찬가지로 파싱하여 표시
                             );
                             tbody.append(tr)
+                            $('#movie-list tbody').append(tr);
                         });
                     }
                 },
