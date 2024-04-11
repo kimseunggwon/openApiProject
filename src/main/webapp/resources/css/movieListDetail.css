@@ -31,3 +31,29 @@
     padding: 10px;
     border-radius: 5px;
 }
+
+.actor-name { font-weight: bold; }
+.actor-role { color: #555; font-size: 0.9em; }
+.company-name { font-weight: bold; }
+.company-code { color: #555; font-size: 0.9em; }
+
+
+.back-button {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+}

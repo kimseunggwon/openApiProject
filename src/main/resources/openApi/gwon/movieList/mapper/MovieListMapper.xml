@@ -12,8 +12,24 @@
     </select>
 
     <select id="findAll" parameterType="string" resultType="openApi.gwon.movieList.dto.movieList.MovieListDto">
-        SELECT movieListId, movieCd, movieNm, movieNmEn, prdtYear, openDt, typeNm, prdtStatNm, nationAlt, genreAlt, repNationNm, repGenreNm, directors, companys
-        FROM MovieList
+        SELECT
+            ml.MOVIECD,
+            ml.MOVIENM,
+            ml.MOVIENMEN,
+            ml.PRDTYEAR,
+            ml.OPENDT,
+            ml.TYPENM,
+            ml.PRDTSTATNM,
+            ml.NATIONALT,
+            ml.GENREALT,
+            ml.REPNATIONNM,
+            ml.REPGENRENM,
+            ml.DIRECTORS,
+            c.COMPANYCD
+        FROM
+            MovieList ml
+                LEFT JOIN
+            COMPANIES c ON ml.MOVIECD = c.MOVIECD
     </select>
 
     <select id="countAllMovies" resultType="int">

@@ -163,10 +163,11 @@
                         $.each(movies, function (i, movie) {
 
                             // 서버로 받은 파싱된 리스트를 감독과 제작사 이름을 문자열로 합친다
-                            // map() 함수로 directorsList와 companiesList의 각 요소를 순회하면서 감독의 이름과 제작사의 이름을 추출하여 새로운 배열을 만들고
-                            // 단일 문자열로 결합한다
+                            // map() 함수로 directorsList와 companiesList의 각 요소를 순회하면서 감독의 이름과 제작사의 이름을 추출하여 새로운 배열을 만들고 단일 문자열로 결합
                             var directorsNames = movie.directorsList.map(director => director.peopleNm).join(", ");
                             var companiesNames = movie.companiesList.map(company => company.companyNm).join(", ");
+                            var companiesInfo = movie.companiesList.map(company => company.companyNm + " (" + company.companyCd + ")").join(", ");
+
 
                             // 개봉일을 YYYY.MM.DD 형식으로 변환하는 코드
                             var formattedOpenDt = movie.openDt && movie.openDt.length === 8 ?
@@ -193,7 +194,7 @@
                                 $('<td>').text(movie.genreAlt),
                                 $('<td>').text(movie.prdtStatNm),
                                 $('<td>').text(directorsNames), // 여기서 directorsJson을 파싱하여 표시
-                                $('<td>').text(companiesNames) // companiesJson도 마찬가지로 파싱하여 표시
+                                $('<td>').text(companiesInfo) // companiesJson도 마찬가지로 파싱하여 표시
                             );
                             tbody.append(tr)
                             $('#movie-list tbody').append(tr);

@@ -8,6 +8,7 @@ import jdk.security.jarsigner.JarSignerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
+import openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto;
 import openApi.gwon.movieList.dto.movieDetail.*;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieDetailImplRepository;
@@ -64,7 +65,7 @@ public class MovieApiCallService {
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            log.info("responseWeeklyBoxOffice = " + response.getBody());
+            //log.info("responseWeeklyBoxOffice = " + response.getBody());
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response; // JSON 문자열 그대로 반환
@@ -115,16 +116,16 @@ public class MovieApiCallService {
         //log.info("totalPages" + totalPages);
 
         int totalPages = (int) Math.ceil((double) MAX_ITEMS / ITEMS_PER_PAGE); // 500 / 10 => 10개씩 50 페이지 => 총 500개
-        log.info("totalPages aa" + totalPages);
+        //log.info("totalPages aa" + totalPages);
 
         // ITEMS_PER_PAGE = 한 페이지에 10개씩 , page = 5개면 , 총 50개
         for (int page = 1; page <= totalPages; page++) { //  page <= totalPages
-            log.info("page" + page);
+            //log.info("page" + page);
             String url = buildUrl(page, ITEMS_PER_PAGE).toUriString();
-            log.info("url : " + url);
+            //log.info("url : " + url);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                log.info("response.getBody" + response.getBody());
+                //log.info("response.getBody" + response.getBody());
                 allMovies.addAll(extractMovies(response.getBody()));
                 System.out.println("allMovies" + allMovies);
             }
@@ -213,7 +214,7 @@ public class MovieApiCallService {
         if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
             throw new Exception("API 호출 실패");
         }
-        log.info("response.getBody = {}", response.getBody());
+        //log.info("response.getBody = {}", response.getBody());
 
         // ObjectMapper 인스턴스 생성
         ObjectMapper objectMapper = new ObjectMapper();
@@ -223,7 +224,7 @@ public class MovieApiCallService {
         // 영화 상세 정보 추출
         JsonNode movieInfoNode = rootNode.path("movieInfoResult").path("movieInfo");
         MovieDetailDto movieDetail = objectMapper.treeToValue(movieInfoNode, MovieDetailDto.class);
-        log.info("movieDetail = {}", movieDetail);
+        //log.info("movieDetail = {}", movieDetail);
 
         // 관련된 DTO를 리스트로 추출
         List<Actor> actors = objectMapper.readValue(
@@ -283,10 +284,10 @@ public class MovieApiCallService {
         movieDetail.setCompanies(companies);
         movieDetail.setShowTypes(showTypes);
         movieDetail.setStaffs(staffs);
-        log.info("actors = {}", actors);
-        log.info("companies = {}", companies);
-        log.info("showTypes = {}", showTypes);
-        log.info("staffs = {}", staffs);
+        //log.info("actors = {}", actors);
+        //log.info("companies = {}", companies);
+        //log.info("showTypes = {}", showTypes);
+        //log.info("staffs = {}", staffs);
 
         return movieDetail;
     }
@@ -311,7 +312,7 @@ public class MovieApiCallService {
         // 저장된 영화 코드 추출 ( 테스트 movieCode 10개만 우선 )
         //List<String> movieCodes = movieListImplRepository.findAllMovieCodes().subList(0, 10);
         List<String> movieCodes = movieListImplRepository.findAllMovieCodes();
-        log.info("Processing movieCodes  = {}", movieCodes);
+        //log.info("Processing movieCodes  = {}", movieCodes);
 
         // todo : 중복 데이터 처리
         for (String movieCd : movieCodes) {
@@ -319,7 +320,7 @@ public class MovieApiCallService {
 
                 //각 영화 코드에 대한 전체 영화 상세 정보 조회
                 MovieDetailDto movieDetail = callMovieDetailApi(movieCd);
-                log.info("movieCd 에 대한 movieDetail = {}", movieDetail);
+                //log.info("movieCd 에 대한 movieDetail = {}", movieDetail);
 
                 // 조회된 영화 상세 정보 저장
                 movieDetailImplRepository.saveMovieDetail(movieDetail); // 영화 기본 정보 저장
@@ -327,22 +328,22 @@ public class MovieApiCallService {
                 // 관련 엔티티들도 저장
                 for (Actor actor : movieDetail.getActors()) {
                     movieDetailImplRepository.saveActor(actor);
-                    log.info("actor save  = {} " , actor);
+                    //log.info("actor save  = {} " , actor);
                 }
 
                 for (Company company : movieDetail.getCompanies()) {
                     movieDetailImplRepository.saveCompany(company);
-                    log.info("company save  = {} " , company);
+                    //log.info("company save  = {} " , company);
                 }
 
                 for (ShowType showType : movieDetail.getShowTypes()) {
                     movieDetailImplRepository.saveShowType(showType);
-                    log.info("showType save  = {} " , showType);
+                    //log.info("showType save  = {} " , showType);
                 }
 
                 for (Staff staff : movieDetail.getStaffs()) {
                     movieDetailImplRepository.saveStaff(staff);
-                    log.info("staff save  = {} " , staff);
+                    //log.info("staff save  = {} " , staff);
                 }
                 // 기타 필요한 엔티티 저장 작업
 
@@ -399,6 +400,50 @@ public class MovieApiCallService {
             return staff.getPeopleNm() == null && staff.getPeopleNmEn() == null && staff.getStaffRoleNm() == null;
         }
         return false; // 타입이 매칭되지 않는 경우, 기본적으로는 비어있지 않다고 가정
+    }
+
+    /**
+     * 영화사 상세정보 조회 API
+     *  companyCd	문자열(필수) :	영화사코드
+     */
+    public ResponseEntity<String> callCompanyDetail(String companyCd) throws Exception {
+
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+                .fromUriString(OpenApiConstants.API_URL_COMPANY_DETAIL)
+                .queryParam("key",OpenApiConstants.API_KEY_LIST)
+                .queryParam("companyCd" , companyCd);
+
+        String url = uriComponentsBuilder.toUriString();
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new Exception("API 호출 실패");
+        }
+        log.info("response.getBody = {}", response.getBody());
+
+        //
+
+        return response;
+    }
+
+    /**
+     *  영화사 상세정보 Insert 작업
+     *  companyCd	문자열(필수) :	영화사코드
+     */
+    @Transactional
+    public CompanyDetailsDto getCompanyDetail(String companyCd) throws Exception {
+
+
+        // 1. movieListId 별로 추출된 companyCd를 이용해, 해당 제작사의 상세 정보를 오픈 API 조회
+
+
+        // 2.조회된 상세 정보는 CompanyDetails 및 Filmo 테이블에 저장
+
+
+        ResponseEntity<String> response = callCompanyDetail(companyCd);
+
+
+        return null;
+
     }
 
 

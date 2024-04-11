@@ -167,4 +167,10 @@ public class MovieApiController {
         return movieApiCallService.getMovieDetailByMovieCd(movieCd);
     }
 
+    @GetMapping("/find/companyDetail")
+    public ResponseEntity<String> callCompanyDetail(@RequestParam String companyCd) throws Exception {
+
+        return movieApiCallService.callCompanyDetail(companyCd);
+    }
+
 }

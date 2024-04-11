@@ -21,6 +21,8 @@ public class MovieListDto {
     private String repGenreNm;
     private Integer totCnt;
 
+    private String companyCd;
+
     // DB 저장할때는 directors , companys 필드
     private String directors;
     private String companys;

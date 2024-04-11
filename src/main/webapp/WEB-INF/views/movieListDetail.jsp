@@ -6,6 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+<button id="back-button" class="back-button">뒤로 가기</button>
 
 <div id="movie-details" class="movie-details">
     <h2 id="movie-title"></h2>
@@ -54,27 +55,25 @@
                 $('#status').text(response.prdtStatNm);
                 $('#running-time').text(response.showTm)
 
-                // 배우 목록 추가
+                // 배우 목록에 항목 추가
                 response.actors.forEach(function(actor) {
-                    var actorInfo = actor.peopleNm;
+                    var actorInfo = '<span class="actor-name">' + actor.peopleNm + '</span>';
                     if (actor.peopleNmEn) actorInfo += " (" + actor.peopleNmEn + ")";
                     if (actor.cast || actor.castEn) {
-                        actorInfo += " - 배역 : ";
-                        if (actor.cast) actorInfo += actor.cast;
-                        if (actor.castEn) actorInfo += " (" + actor.castEn + ")";
+                        actorInfo += ' - <span class="actor-role">배역: ' + (actor.cast ? actor.cast : '') + (actor.castEn ? " (" + actor.castEn + ")" : '') + '</span>';
                     }
-                    $('#actors-list').append($('<li>').text(actorInfo));
+                    $('#actors-list').append($('<li>').html(actorInfo));
                 });
 
-
-// 제작사 목록 추가
+                 //제작사 목록에 항목 추가
                 response.companies.forEach(function(company) {
-                    var companyInfo = company.companyNm;
+                    var companyInfo = '<span class="company-name">' + company.companyNm + '</span>';
                     if (company.companyNmEn) companyInfo += " (" + company.companyNmEn + ")";
-                    $('#companies-list').append($('<li>').text(companyInfo + " - 제작사 코드 : " + company.companyCd));
+                    companyInfo += ' - <span class="company-code">제작사 코드: ' + company.companyCd + '</span>';
+                    $('#companies-list').append($('<li>').html(companyInfo));
                 });
 
-// 상영 유형 목록 추가
+                // 상영 유형 목록 추가
                 response.showTypes.forEach(function(showType) {
                     var showTypeInfo = showType.showTypeGroupNm + " - " + showType.showTypeNm;
                     if (showType.watchGradeNm) showTypeInfo += " - " + showType.watchGradeNm;
@@ -82,7 +81,7 @@
                     $('#showtypes-list').append($('<li>').text(showTypeInfo));
                 });
 
-// 스태프 목록 추가
+                // 스태프 목록 추가
                 response.staffs.forEach(function(staff) {
                     var staffInfo = staff.peopleNm;
                     if (staff.peopleNmEn) staffInfo += " (" + staff.peopleNmEn + ")";
@@ -98,12 +97,10 @@
 
         })
 
-
+        $('#back-button').on('click', function() {
+            window.history.back();
+        });
     })
-
-
-
-
 
 </script>
 </body>
