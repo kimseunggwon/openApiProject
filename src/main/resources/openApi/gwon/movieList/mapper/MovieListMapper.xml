@@ -13,6 +13,7 @@
 
     <select id="findAll" parameterType="string" resultType="openApi.gwon.movieList.dto.movieList.MovieListDto">
         SELECT
+            ml.MOVIELISTID,
             ml.MOVIECD,
             ml.MOVIENM,
             ml.MOVIENMEN,
@@ -25,11 +26,9 @@
             ml.REPNATIONNM,
             ml.REPGENRENM,
             ml.DIRECTORS,
-            c.COMPANYCD
+            ml.COMPANYS
         FROM
             MovieList ml
-                LEFT JOIN
-            COMPANIES c ON ml.MOVIECD = c.MOVIECD
     </select>
 
     <select id="countAllMovies" resultType="int">

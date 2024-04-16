@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
 import openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto;
 import openApi.gwon.movieList.dto.movieDetail.*;
+import openApi.gwon.movieList.dto.movieList.CompanyList;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieDetailImplRepository;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
@@ -407,23 +408,79 @@ public class MovieApiCallService {
      *  companyCd	문자열(필수) :	영화사코드
      */
     public ResponseEntity<String> callCompanyDetail(String companyCd) throws Exception {
+        try {
+            UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+                    .fromUriString(OpenApiConstants.API_URL_COMPANY_DETAIL)
+                    .queryParam("key", OpenApiConstants.API_KEY_LIST)
+                    .queryParam("companyCd", companyCd);
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
-                .fromUriString(OpenApiConstants.API_URL_COMPANY_DETAIL)
-                .queryParam("key",OpenApiConstants.API_KEY_LIST)
-                .queryParam("companyCd" , companyCd);
+            String url = uriComponentsBuilder.toUriString();
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new Exception("API 호출 실패");
+            }
+            log.info("response.getBody = {}", response.getBody());
 
-        String url = uriComponentsBuilder.toUriString();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new Exception("API 호출 실패");
+            List<MovieListDto> moviesList = movieListImplRepository.findAll();
+            log.info("moviesList aa = {}" , moviesList);
+
+            int count = 0; // 로깅할 companyCd 개수를 세기 위한 카운터
+
+            // 각 MovieListDto의 companys
+            for (MovieListDto movie : moviesList) {
+                if (movie.getCompanys() != null) {
+                    try {
+                        List<CompanyList> companyLists = parseCompanys(movie.getCompanys());
+                        for (CompanyList companyList : companyLists) {
+                            String companyCds = companyList.getCompanyCd();
+                            log.info("Extracted companyCd: {}", companyCds); // companyCd 로깅
+
+                            count++; // 로깅된 companyCd 개수를 하나 증가
+                            if (count >= 100) { // 로깅하려는 companyCd 개수가 100개에 도달하면 반복 종료
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.error("Error parsing companys for movieListId: {}, error: {}", movie.getMovieListId(), e.getMessage());
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Error calling company detail API: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        log.info("response.getBody = {}", response.getBody());
-
-        //
-
-        return response;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    public List<CompanyList> parseCompanys(String companysJson) throws Exception {
+        // objectMapper.readValue 메서드의 두 번째 인자는 TypeReference를 이용해 실제 클래스의 타입을 명시해야 합니다.
+        // 'companys'가 아닌 'CompanyList' 클래스 타입을 제네릭에 사용해야 합니다.
+        return objectMapper.readValue(companysJson, new TypeReference<List<CompanyList>>(){});
+    }
+
+  /*  public void processMovies() throws Exception {
+        // searchMovieList 쿼리를 호출하여 결과를 moviesList에 저장
+        List<MovieListDto> moviesList = movieListImplRepository.findAll();
+
+        int count = 0; // 로깅할 companyCd 개수를 세기 위한 카운터
+
+        // 각 MovieListDto의 companys 필드에서 companyCd를 추출
+        for(MovieListDto movie : moviesList) {
+            if (movie.getCompanys() != null && !movie.getCompanys().isEmpty()){
+                List<CompanyList> companyLists = parseCompanys(movie.getCompanys());
+                for (CompanyList companyList : companyLists) {
+                    String companyCd = companyList.getCompanyCd();
+                    log.info("Extracted companyCd: {}", companyCd); // companyCd 로깅
+
+                    count++; // 로깅된 companyCd 개수를 하나 증가
+                    if(count >= 100) { // 로깅하려는 companyCd 개수가 100개에 도달하면 반복 종료
+                        return;
+                    }
+                }
+            }
+        }
+    }*/
 
     /**
      *  영화사 상세정보 Insert 작업

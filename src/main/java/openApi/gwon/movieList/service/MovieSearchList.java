@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import openApi.gwon.movieList.dto.movieList.Company;
+import openApi.gwon.movieList.dto.movieList.CompanyList;
 import openApi.gwon.movieList.dto.movieList.Directors;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
@@ -47,7 +47,7 @@ public class MovieSearchList {
 
                 // companiesJson 파싱 ( null 이거나 비어있는 경우 설정)
                 if (movie.getCompanys() != null && !movie.getCompanys().isEmpty()){
-                    Company[] companiesArray = objectMapper.readValue(movie.getCompanys(), Company[].class); // Company 배열
+                    CompanyList[] companiesArray = objectMapper.readValue(movie.getCompanys(), CompanyList[].class); // Company 배열
                     movie.setCompaniesList(Arrays.asList(companiesArray));
                     //log.info("companiesArray aaa ={} " , companiesArray);
                 }

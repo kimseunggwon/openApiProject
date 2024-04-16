@@ -7,10 +7,11 @@ import lombok.Data;
 @Data
 public class PartDto {
 
-    @JsonProperty("movieCd")
-    private String flmoMovieCd;
-    @JsonProperty("movieNm")
-    private String flmoMovieNm;
+    private Integer partId;
+
+    @JsonProperty("companyCd")
+    private String partCompanyCd;
+
     @JsonProperty("companyPartNm")
-    private String companyPartNm;
+    private String partCompanyPartNm;
 }

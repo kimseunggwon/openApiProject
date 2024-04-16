@@ -4,7 +4,7 @@ package openApi.gwon.movieList.dto.movieList;
 import lombok.Data;
 
 @Data
-public class Company {
+public class CompanyList {
 
     private String companyCd;
     private String companyNm;
