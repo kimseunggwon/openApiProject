@@ -4,6 +4,7 @@ package openApi.gwon.movieList.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto;
 import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.movieDetail.MovieDetailDto;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
@@ -168,9 +169,19 @@ public class MovieApiController {
     }
 
     @GetMapping("/find/companyDetail")
-    public ResponseEntity<String> callCompanyDetail(@RequestParam String companyCd) throws Exception {
+    public CompanyDetailsDto callCompanyDetail(@RequestParam String companyCd , String movieListId) throws Exception {
 
-        return movieApiCallService.callCompanyDetail(companyCd);
+        return movieApiCallService.callCompanyDetail(companyCd,movieListId);
+    }
+
+    @GetMapping("/process-save")
+    public ResponseEntity<String> processAndSaveCompanyDetails() throws Exception{
+        try {
+            movieApiCallService.processAndSaveCompanyDetails();
+            return ResponseEntity.ok("Processed and saved company details successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to process and save company details: " + e.getMessage());
+        }
     }
 
 }

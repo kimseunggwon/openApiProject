@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="openApi.gwon.movieList.mapper.MovieCompanyDetailMapper">
+
+    <!-- COMPANYDETAILS 테이블에 데이터 삽입 -->
+    <insert id="saveMovieDetail" parameterType="openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto">
+        INSERT INTO CompanyDetails (CompanyCd, companyNm, companyNmEn, ceoNm, movieListId)
+        VALUES (#{companyDetailCd}, #{companyDetailNm}, #{companyDetailNmEn}, #{ceoNm}, #{movieListId})
+    </insert>
+
+    <!-- FILMO 테이블에 데이터 삽입 -->
+    <insert id="insertFilmo" parameterType="openApi.gwon.movieList.dto.companyDetail.FilmoDto">
+        INSERT INTO FILMO (companyCd, movieCd, movieNm, companyPartNm)
+        VALUES (#{filmoCompanyCd}, #{filmoMovieCd}, #{filmoMovieNm}, #{filmoCompanyPartNm})
+    </insert>
+
+    <!-- COMPANYPARTS 테이블에 데이터 삽입 -->
+    <insert id="insertCompanyPart" parameterType="openApi.gwon.movieList.dto.companyDetail.PartDto">
+        INSERT INTO COMPANYPARTS (companyCd, companyPartNm)
+        VALUES (#{partCompanyCd}, #{partCompanyPartNm})
+    </insert>
+
+
+
+</mapper>

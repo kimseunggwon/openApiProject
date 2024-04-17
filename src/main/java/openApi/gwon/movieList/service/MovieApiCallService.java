@@ -1,6 +1,5 @@
 package openApi.gwon.movieList.service;
 
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,9 +8,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
 import openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto;
+import openApi.gwon.movieList.dto.companyDetail.FilmoDto;
+import openApi.gwon.movieList.dto.companyDetail.PartDto;
 import openApi.gwon.movieList.dto.movieDetail.*;
 import openApi.gwon.movieList.dto.movieList.CompanyList;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
+import openApi.gwon.movieList.repository.MovieCompanyDetailImplRepository;
 import openApi.gwon.movieList.repository.MovieDetailImplRepository;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,7 @@ public class MovieApiCallService {
     private final ObjectMapper objectMapper;
 
     private final MovieDetailImplRepository movieDetailImplRepository;
+    private final MovieCompanyDetailImplRepository movieCompanyDetailImplRepository;
 
 
     /**
@@ -405,10 +408,12 @@ public class MovieApiCallService {
 
     /**
      * 영화사 상세정보 조회 API
-     *  companyCd	문자열(필수) :	영화사코드
+     * @param companyCd 영화사코드
+     * @param movieListId 영화 목록 ID
+     * @return CompanyDetailsDto 변환된 회사 상세 정보 DTO
+     * @throws Exception API 호출 실패 또는 JSON 파싱 실패시 예외 발생
      */
-    public ResponseEntity<String> callCompanyDetail(String companyCd) throws Exception {
-        try {
+    public CompanyDetailsDto callCompanyDetail(String companyCd, String movieListId) throws Exception {
             UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
                     .fromUriString(OpenApiConstants.API_URL_COMPANY_DETAIL)
                     .queryParam("key", OpenApiConstants.API_KEY_LIST)
@@ -421,88 +426,123 @@ public class MovieApiCallService {
             }
             log.info("response.getBody = {}", response.getBody());
 
-            List<MovieListDto> moviesList = movieListImplRepository.findAll();
-            log.info("moviesList aa = {}" , moviesList);
+        // ObjectMapper를 사용하여 JSON 응답에서 "companyInfo" 객체를 추출
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getBody());
+        JsonNode companyInfoNode = rootNode.path("companyInfoResult").path("companyInfo");
 
-            int count = 0; // 로깅할 companyCd 개수를 세기 위한 카운터
+        // JsonNode에서 DTO로 변환
+        CompanyDetailsDto companyDetails = objectMapper.treeToValue(companyInfoNode,CompanyDetailsDto.class);
+        companyDetails.setMovieListId(movieListId); // movieListId 설정
+        companyDetails.setCompanyDetailCd(companyCd);
+        //log.info("companyDetails = {}" , companyDetails);
 
-            // 각 MovieListDto의 companys
-            for (MovieListDto movie : moviesList) {
-                if (movie.getCompanys() != null) {
-                    try {
-                        List<CompanyList> companyLists = parseCompanys(movie.getCompanys());
-                        for (CompanyList companyList : companyLists) {
-                            String companyCds = companyList.getCompanyCd();
-                            log.info("Extracted companyCd: {}", companyCds); // companyCd 로깅
-
-                            count++; // 로깅된 companyCd 개수를 하나 증가
-                            if (count >= 100) { // 로깅하려는 companyCd 개수가 100개에 도달하면 반복 종료
-                                break;
-                            }
-                        }
-                    } catch (Exception e) {
-                        log.error("Error parsing companys for movieListId: {}, error: {}", movie.getMovieListId(), e.getMessage());
-                    }
-                }
+        if (companyDetails.getParts() != null){
+            for (PartDto part : companyDetails.getParts()){
+                part.setPartCompanyCd(companyCd);
             }
-
-        } catch (Exception e) {
-            log.error("Error calling company detail API: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (companyDetails.getFilmos() != null) {
+            for (FilmoDto filmo : companyDetails.getFilmos()) {
+                filmo.setFilmoCompanyCd(companyCd);
+            }
+        }
+        log.info("companyDetails = {}" , companyDetails);
+
+        return companyDetails;
     }
 
+
+    /** 1.MovieListDto의 목록을 얻고 companyCd를 추출하는 메서드
+     */
+    public List<Map.Entry<String,String>> extractCompanyCdFromMovieList() throws Exception {
+        List<MovieListDto> moviesList = movieListImplRepository.findAll();
+        log.info("moviesList = {}" , moviesList);
+        List<Map.Entry<String,String>> companyCdList = new ArrayList<>();
+
+        for (MovieListDto movie : moviesList) {
+            if (movie.getCompanys() != null) {
+                List<CompanyList> companyLists = parseCompanys(movie.getCompanys());
+                for (CompanyList companyList : companyLists) {
+                    companyCdList.add(new AbstractMap.SimpleEntry<>(movie.getMovieListId(), companyList.getCompanyCd()));
+                }
+            }
+        }
+        log.info("첫번째 companyCdList = {}" , companyCdList);
+        return companyCdList;
+
+    }
     public List<CompanyList> parseCompanys(String companysJson) throws Exception {
         // objectMapper.readValue 메서드의 두 번째 인자는 TypeReference를 이용해 실제 클래스의 타입을 명시해야 합니다.
         // 'companys'가 아닌 'CompanyList' 클래스 타입을 제네릭에 사용해야 합니다.
         return objectMapper.readValue(companysJson, new TypeReference<List<CompanyList>>(){});
     }
 
-  /*  public void processMovies() throws Exception {
-        // searchMovieList 쿼리를 호출하여 결과를 moviesList에 저장
-        List<MovieListDto> moviesList = movieListImplRepository.findAll();
-
-        int count = 0; // 로깅할 companyCd 개수를 세기 위한 카운터
-
-        // 각 MovieListDto의 companys 필드에서 companyCd를 추출
-        for(MovieListDto movie : moviesList) {
-            if (movie.getCompanys() != null && !movie.getCompanys().isEmpty()){
-                List<CompanyList> companyLists = parseCompanys(movie.getCompanys());
-                for (CompanyList companyList : companyLists) {
-                    String companyCd = companyList.getCompanyCd();
-                    log.info("Extracted companyCd: {}", companyCd); // companyCd 로깅
-
-                    count++; // 로깅된 companyCd 개수를 하나 증가
-                    if(count >= 100) { // 로깅하려는 companyCd 개수가 100개에 도달하면 반복 종료
-                        return;
-                    }
-                }
-            }
-        }
-    }*/
-
     /**
-     *  영화사 상세정보 Insert 작업
-     *  companyCd	문자열(필수) :	영화사코드
+     * 실제 데이터베이스에 CompanyDetailsDto 객체를 저장하는 메서드
+     * @param companyDetails 변환된 회사 상세 정보 DTO
      */
     @Transactional
-    public CompanyDetailsDto getCompanyDetail(String companyCd) throws Exception {
+    public void saveCompanyDetails(CompanyDetailsDto companyDetails) {
 
+        // CompanyDetails 정보 저장
+        movieCompanyDetailImplRepository.saveMovieDetail(companyDetails);
 
-        // 1. movieListId 별로 추출된 companyCd를 이용해, 해당 제작사의 상세 정보를 오픈 API 조회
+        // filmo 정보 저장
+        if (companyDetails.getFilmos() != null) {
+            for (FilmoDto filmo : companyDetails.getFilmos()) {
+                filmo.setFilmoCompanyCd(companyDetails.getCompanyDetailCd());
+                movieCompanyDetailImplRepository.insertFilmo(filmo);
+            }
+        }
 
-
-        // 2.조회된 상세 정보는 CompanyDetails 및 Filmo 테이블에 저장
-
-
-        ResponseEntity<String> response = callCompanyDetail(companyCd);
-
-
-        return null;
-
+        // part 정보 저장
+        if (companyDetails.getParts() != null) {
+            for (PartDto part : companyDetails.getParts()){
+                part.setPartCompanyCd(companyDetails.getCompanyDetailCd());
+                movieCompanyDetailImplRepository.insertCompanyPart(part);
+            }
+        }
     }
 
+
+    /**
+     *  모든 MovieListDto에서 companyCd를 추출하고, 각 companyCd에 대해 상세 정보를 조회한 후 저장
+     */
+    @Transactional
+    public void processAndSaveCompanyDetails() throws Exception {
+        List<Map.Entry<String, String>> companyCdList = extractCompanyCdFromMovieList();
+        int count = 0;
+        for (Map.Entry<String,String> entry : companyCdList) {
+            if (count >= 5) break; // 5개 이상 처리 x
+            String movieListId = entry.getKey();
+            String companyCd = entry.getValue();
+            log.info("movieListId a = {} " , movieListId);
+            log.info("companyCd a = {} " , companyCd);
+
+            try {
+                CompanyDetailsDto companyDetails = callCompanyDetail(companyCd,movieListId);
+                log.info("companyDetails = {}" , companyDetails);
+                saveCompanyDetails(companyDetails);
+                count++;
+            } catch (Exception e) {
+                log.error("Error processing company details for companyCd: {}, error: {}", companyCd, e.getMessage());
+                continue; // 에러가 발생한 경우 ,다음 회사 상세 정보 처리로 넘어감
+            }
+        }
+    }
+
+
+
+
+
+    /**
+     * MovieListDto 추출: movieListImplRepository.findAll()를 호출하여 MovieListDto의 목록을 가져옵니다. 각 MovieListDto에서 companyCd를 추출하고 이를 movieListId와 함께 저장합니다. 이 때 companyCd는 null일 수도 있고, 여러 개가 있을 수도 있습니다.
+     *
+     * API 호출 및 상세 정보 저장: 추출한 companyCd를 이용하여 callCompanyDetail 메서드로 API를 호출하고, 그 결과를 받습니다. API로부터 받은 데이터는 CompanyDetailsDto 객체로 변환되어야 하며, 이 과정에서 movieListId도 함께 저장되어야 합니다. 이렇게 함으로써 각 companyCd가 어느 movieListId에 속하는지 추적할 수 있습니다.
+     *
+     * 데이터베이스에 저장: 변환된 CompanyDetailsDto 객체들을 데이터베이스에 저장합니다. 이 때, companyCd와 movieListId의 연결 정보도 함께 저장되어야 하므로, 이를 위한 적절한 데이터베이스 설계가 필요합니다. 예를 들어, CompanyDetails 테이블에 movieListId 컬럼을 추가하여, 어떤 movieList의 companyCd인지를 명시할 수 있습니다.
+     */
 
 
 }
