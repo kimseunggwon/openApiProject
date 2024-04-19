@@ -532,10 +532,6 @@ public class MovieApiCallService {
         }
     }
 
-
-
-
-
     /**
      * MovieListDto 추출: movieListImplRepository.findAll()를 호출하여 MovieListDto의 목록을 가져옵니다. 각 MovieListDto에서 companyCd를 추출하고 이를 movieListId와 함께 저장합니다. 이 때 companyCd는 null일 수도 있고, 여러 개가 있을 수도 있습니다.
      *

@@ -28,4 +28,9 @@ public class MovieCompanyDetailImplRepository implements MovieCompanyDetailRepos
     public void insertCompanyPart(PartDto partDto) {
         movieCompanyDetailMapper.insertCompanyPart(partDto);
     }
+
+    @Override
+    public CompanyDetailsDto selectCompanyDetailsByMovieListId(String movieListId, String companyCd) {
+        return movieCompanyDetailMapper.selectCompanyDetailsByMovieListId(movieListId,companyCd);
+    }
 }

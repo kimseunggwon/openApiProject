@@ -161,6 +161,7 @@
                         $('.no-result').hide();
 
                         $.each(movies, function (i, movie) {
+                            //debugger;
 
                             // 서버로 받은 파싱된 리스트를 감독과 제작사 이름을 문자열로 합친다
                             // map() 함수로 directorsList와 companiesList의 각 요소를 순회하면서 감독의 이름과 제작사의 이름을 추출하여 새로운 배열을 만들고 단일 문자열로 결합

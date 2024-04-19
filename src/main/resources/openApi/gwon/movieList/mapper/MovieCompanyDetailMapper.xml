@@ -23,6 +23,48 @@
         VALUES (#{partCompanyCd}, #{partCompanyPartNm})
     </insert>
 
+    <select id="selectCompanyDetailsByMovieListId" parameterType="String" resultMap="CompanyDetailResultMap">
+        SELECT
+            cd.CompanyCd,
+            cd.companyNm,
+            cd.companyNmEn,
+            cd.ceoNm,
+            cd.movieListId,
+            f.movieCd,
+            f.movieNm,
+            f.companyPartNm,
+            cp.partId,
+            cp.companyCd AS partCompanyCd,
+            cp.companyPartNm AS partCompanyPartNm
+        FROM
+            COMPANYDETAILS cd
+                LEFT JOIN FILMO f ON cd.CompanyCd = f.companyCd
+                LEFT JOIN COMPANYPARTS cp ON cd.CompanyCd = cp.companyCd
+        WHERE
+            cd.movieListId = #{movieListId}
+          AND cd.CompanyCd = #{companyCd};
+    </select>
+
+    <resultMap id="CompanyDetailResultMap" type="openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto">
+        <id property="companyDetailCd" column="CompanyCd"/>
+        <result property="companyDetailNm" column="companyNm"/>
+        <result property="companyDetailNmEn" column="companyNmEn"/>
+        <result property="ceoNm" column="ceoNm"/>
+        <result property="movieListId" column="movieListId"/>
+        <collection property="filmos" ofType="openApi.gwon.movieList.dto.companyDetail.FilmoDto">
+            <id property="filmoid" column="filmoid"/>
+            <result property="filmoCompanyCd" column="companyCd"/>
+            <result property="filmoMovieCd" column="movieCd"/>
+            <result property="filmoMovieNm" column="movieNm"/>
+            <result property="filmoCompanyPartNm" column="companyPartNm"/>
+        </collection>
+        <collection property="parts" ofType="openApi.gwon.movieList.dto.companyDetail.PartDto">
+            <id property="partId" column="partId"/>
+            <result property="partCompanyCd" column="partCompanyCd"/>
+            <result property="partCompanyPartNm" column="partCompanyPartNm"/>
+        </collection>
+    </resultMap>
+
 
 
 </mapper>

@@ -184,4 +184,21 @@ public class MovieApiController {
         }
     }
 
+    /**
+     *  영화사 상세정보 조회 API
+     * @param movieListId
+     * @param companyCd
+     * @return
+     */
+    @GetMapping("/search-company")
+    public ResponseEntity<CompanyDetailsDto> getCompanyDetails(@RequestParam String movieListId, @RequestParam String companyCd) {
+
+        CompanyDetailsDto companyDetailsDto = movieApiGetService.getCompanyDetails(movieListId, companyCd);
+        if (companyDetailsDto != null) {
+            return ResponseEntity.ok(companyDetailsDto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

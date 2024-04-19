@@ -7,13 +7,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.OpenApiConstants;
+import openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto;
 import openApi.gwon.movieList.dto.dailyBoxOfficeList.DailyBoxOfficeListDto;
 import openApi.gwon.movieList.dto.movieList.MovieListDto;
+import openApi.gwon.movieList.repository.MovieCompanyDetailRepository;
 import openApi.gwon.movieList.repository.MovieListImplRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
@@ -29,6 +32,8 @@ import java.util.*;
 public class MovieApiGetService {
 
     private final MovieListImplRepository movieListImplRepository;
+
+    private final MovieCompanyDetailRepository movieCompanyDetailRepository;
 
     private final MovieApiCallService movieApiCallService;
     private final RestTemplate restTemplate;
@@ -201,7 +206,6 @@ public class MovieApiGetService {
 
     /**
      * 일별 박스오피스 API 서비스
-     *
      * @param targetDt
      * @return
      */
@@ -273,6 +277,22 @@ public class MovieApiGetService {
         } catch (UnsupportedEncodingException e) {
             log.error("Error encoding URL parameter", e);
             return "";
+        }
+    }
+
+    /**
+     * 영화사 상세정보 조회 API 서비스
+     * @param movieListId
+     * @param companyCd
+     * @Transactional(readOnly = true) : 데이터만 읽기만 하는 조회 작업
+     */
+    @Transactional(readOnly = true)
+    public CompanyDetailsDto getCompanyDetails(String movieListId, String companyCd) {
+        try {
+            return movieCompanyDetailRepository.selectCompanyDetailsByMovieListId(movieListId,companyCd);
+        } catch (Exception e) {
+            log.error("Error retrieving company details for movieListId: {}, companyCd: {}", movieListId, companyCd, e);
+            return null;
         }
     }
 
