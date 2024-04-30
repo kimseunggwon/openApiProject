@@ -445,6 +445,10 @@ public class MovieApiCallService {
         if (companyDetails.getFilmos() != null) {
             for (FilmoDto filmo : companyDetails.getFilmos()) {
                 filmo.setFilmoCompanyCd(companyCd);
+
+                //문자열을 리스트로 반환
+                List<String> partNames = Arrays.asList(filmo.getFilmoCompanyPartNm().split(","));
+                filmo.setFilmoCompanyPartNm(partNames.toString());
             }
         }
         log.info("companyDetails = {}" , companyDetails);
@@ -492,6 +496,10 @@ public class MovieApiCallService {
         if (companyDetails.getFilmos() != null) {
             for (FilmoDto filmo : companyDetails.getFilmos()) {
                 filmo.setFilmoCompanyCd(companyDetails.getCompanyDetailCd());
+
+                // 파트명 리스트를 적절한 문자열로 반환
+                String partNamesAsString = String.join(", ", filmo.getFilmoCompanyPartNm());
+                filmo.setFilmoCompanyPartNm(partNamesAsString);
                 movieCompanyDetailImplRepository.insertFilmo(filmo);
             }
         }
@@ -514,7 +522,7 @@ public class MovieApiCallService {
         List<Map.Entry<String, String>> companyCdList = extractCompanyCdFromMovieList();
         int count = 0;
         for (Map.Entry<String,String> entry : companyCdList) {
-            if (count >= 5) break; // 5개 이상 처리 x
+            if (count >= 100) break; // 5개 이상 처리 x
             String movieListId = entry.getKey();
             String companyCd = entry.getValue();
             log.info("movieListId a = {} " , movieListId);

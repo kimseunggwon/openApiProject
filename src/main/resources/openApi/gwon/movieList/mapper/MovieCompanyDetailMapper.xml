@@ -52,7 +52,6 @@
         <result property="ceoNm" column="ceoNm"/>
         <result property="movieListId" column="movieListId"/>
         <collection property="filmos" ofType="openApi.gwon.movieList.dto.companyDetail.FilmoDto">
-            <id property="filmoid" column="filmoid"/>
             <result property="filmoCompanyCd" column="companyCd"/>
             <result property="filmoMovieCd" column="movieCd"/>
             <result property="filmoMovieNm" column="movieNm"/>

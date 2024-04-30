@@ -40,5 +40,11 @@ public class MovieViewController {
         return "movieListDetail";
     }
 
+    @GetMapping("/company/info.do")
+    public String companyInfoDetail() {
+
+        return "companyInfoDetail";
+    }
+
 
 }
