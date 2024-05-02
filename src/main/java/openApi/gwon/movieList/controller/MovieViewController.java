@@ -41,7 +41,12 @@ public class MovieViewController {
     }
 
     @GetMapping("/company/info.do")
-    public String companyInfoDetail() {
+    public String companyInfoDetail(@RequestParam String companyCd, @RequestParam String movieListId ,Model model) {
+
+        model.addAttribute("companyCd" , companyCd);
+        model.addAttribute("movieListId" , movieListId);
+        log.info("companyInfoDetail companyCd = {}", companyCd);
+        log.info("companyInfoDetail movieListId = {}" , movieListId);
 
         return "companyInfoDetail";
     }
