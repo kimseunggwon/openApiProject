@@ -184,6 +184,19 @@
                                     window.location.href = 'new/movieList/Detail.do?movieCd=' + movie.movieCd;
                                 });
 
+                            // todo : 완
+                            const companiesInfoLink = movie.companiesList.map(company => {
+                                return $('<a>')
+                                    .attr('href', 'javascript:void(0);')
+                                    .text(company.companyNm + " (" + company.companyCd + ")")
+                                    .on('click', function () {
+                                        // 상세 정보 페이지로 리다이렉트하는 로직
+                                        window.location.href = '/company/info.do?companyCd=' + company.companyCd + '&movieListId=' + movie.movieListId;
+                                    });
+                            });
+                            console.log("companiesInfoLink aa" + companiesInfoLink)
+
+
                             const tr = $('<tr>').append(
                                 $('<td>').append(movieTitleLink),
                                 $('<td>').text(movie.movieNmEn),
@@ -195,7 +208,7 @@
                                 $('<td>').text(movie.genreAlt),
                                 $('<td>').text(movie.prdtStatNm),
                                 $('<td>').text(directorsNames), // 여기서 directorsJson을 파싱하여 표시
-                                $('<td>').text(companiesInfo) // companiesJson도 마찬가지로 파싱하여 표시
+                                $('<td>').append(companiesInfoLink) // companiesJson도 마찬가지로 파싱하여 표시
                             );
                             tbody.append(tr)
                             $('#movie-list tbody').append(tr);
