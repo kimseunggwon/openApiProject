@@ -127,7 +127,7 @@
         })
 
         // 영화 데이터 불러오는 함수
-        function fetchMovies(page, size, sortOption , movieName = '', directorName = '', productionYear = '', releaseDate = '', openDateStart = '', openDateEnd = '') {
+        function fetchMovies(page, size, sortOption, movieName = '', directorName = '', productionYear = '', releaseDate = '', openDateStart = '', openDateEnd = '') {
             var queryData = {
                 page: page,
                 size: size,
@@ -166,8 +166,8 @@
                             // 서버로 받은 파싱된 리스트를 감독과 제작사 이름을 문자열로 합친다
                             // map() 함수로 directorsList와 companiesList의 각 요소를 순회하면서 감독의 이름과 제작사의 이름을 추출하여 새로운 배열을 만들고 단일 문자열로 결합
                             var directorsNames = movie.directorsList.map(director => director.peopleNm).join(", ");
-                            var companiesNames = movie.companiesList.map(company => company.companyNm).join(", ");
-                            var companiesInfo = movie.companiesList.map(company => company.companyNm + " (" + company.companyCd + ")").join(", ");
+                           //var companiesNames = movie.companiesList.map(company => company.companyNm).join(", ");
+                            //var companiesInfo = movie.companiesList.map(company => company.companyNm + " (" + company.companyCd + ")").join(", ");
 
 
                             // 개봉일을 YYYY.MM.DD 형식으로 변환하는 코드
@@ -180,22 +180,21 @@
                                 .attr('href', 'javascript:void(0);')
                                 .text(movie.movieNm)
                                 .on('click', function () {
-                                    // 상세 정보 페이지로 리다이렉트하는 로직
+                                    // 영화제목 상세 페이지로 리다이렉트하는 로직
                                     window.location.href = 'new/movieList/Detail.do?movieCd=' + movie.movieCd;
                                 });
 
-                            // todo : 완
-                            const companiesInfoLink = movie.companiesList.map(company => {
-                                return $('<a>')
-                                    .attr('href', 'javascript:void(0);')
+                            // todo :
+                            const companiesInfo = movie.companiesList.map(company => {
+                                return $('<div>')
+                                    .addClass('company-link')
+                                    //.attr('href', 'javascript:void(0);')
                                     .text(company.companyNm + " (" + company.companyCd + ")")
                                     .on('click', function () {
-                                        // 상세 정보 페이지로 리다이렉트하는 로직
-                                        window.location.href = '/company/info.do?companyCd=' + company.companyCd + '&movieListId=' + movie.movieListId;
+                                        // 회사정보 상세 페이지로 리다이렉트
+                                        window.location.href = 'new/company/info.do?companyCd=' + company.companyCd + '&movieListId=' + movie.movieListId;
                                     });
-                            });
-                            console.log("companiesInfoLink aa" + companiesInfoLink)
-
+                            })
 
                             const tr = $('<tr>').append(
                                 $('<td>').append(movieTitleLink),
@@ -208,7 +207,7 @@
                                 $('<td>').text(movie.genreAlt),
                                 $('<td>').text(movie.prdtStatNm),
                                 $('<td>').text(directorsNames), // 여기서 directorsJson을 파싱하여 표시
-                                $('<td>').append(companiesInfoLink) // companiesJson도 마찬가지로 파싱하여 표시
+                                $('<td>').append(companiesInfo) // companiesJson도 마찬가지로 파싱하여 표시
                             );
                             tbody.append(tr)
                             $('#movie-list tbody').append(tr);
@@ -244,7 +243,7 @@
             $('#current-page').text(currentPage) // 페이지네이션을 첫 페이지로 업데이트
 
             // 필터 없이 첫 페이지부터 다시 로드
-            fetchMovies(currentPage, pageSize , 'update');
+            fetchMovies(currentPage, pageSize, 'update');
         });
 
         // fetchMovies 함수 외부에 있어야한다

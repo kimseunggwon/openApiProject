@@ -134,4 +134,18 @@ h1 {
     background-color: #45a049;
 }
 
-/* Rest of your CSS */
+.company-link {
+    color: green; /* 원하는 색상으로 변경 */
+    text-decoration: underline; /* 필요에 따라 꾸밈 */
+    margin-bottom: 5px; /* 각 항목 사이에 간격을 추가 */
+    cursor: pointer;
+}
+.company-link:hover {
+    color: darkgreen; /* 호버 시 색상 변경 */
+}
+.company-list {
+    display: flex;
+    flex-direction: column; /* 세로 방향으로 나열 */
+}
+
+완

@@ -40,7 +40,7 @@ public class MovieViewController {
         return "movieListDetail";
     }
 
-    @GetMapping("/company/info.do")
+    @GetMapping("/new/company/info.do")
     public String companyInfoDetail(@RequestParam String companyCd, @RequestParam String movieListId ,Model model) {
 
         model.addAttribute("companyCd" , companyCd);
