@@ -14,8 +14,8 @@
 <div class="header-container">
     <h1 class="title">영화정보</h1>
     <%--<a id="box-office-button" class="box-office-button" href="http://localhost:8080/main/boxOfficeList.do">박스오피스 보러가기</a>--%>
-    <a id="box-office-button" class="box-office-button" href="${pageContext.request.contextPath}/main/boxOfficeList.do">박스오피스
-        보러가기</a>
+    <a id="box-office-button" class="box-office-button" href="${pageContext.request.contextPath}/main/boxOfficeList.do">박스오피스 보러가기</a>
+    <a id="login-button" class="login-button" href="${pageContext.request.contextPath}/login.do">로그인</a>
 </div>
 
 <div class="container">
@@ -78,6 +78,15 @@
         <span id="current-page">1</span> / <span id="total-pages">0</span>
         <button id="next-page">다음</button>
     </div>
+
+    <!-- 로그인 팝업 -->
+<%--    <div id="login-popup" class="popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <iframe id="login-frame" src="" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+        </div>
+    </div>--%>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -286,6 +295,33 @@
            });
        });*/
 </script>
+
+<script>
+   /* $(document).ready(function () {
+        var popup = $('#login-popup');
+        var btn = $('#login-button');
+        var span = $('.close');
+        var iframe = $('#login-frame');
+
+        btn.click(function() {
+            iframe.attr('src', '${pageContext.request.contextPath}/login'); // 로그인 페이지 URL 설정
+            popup.show();
+        });
+
+        span.click(function() {
+            popup.hide();
+            iframe.attr('src', ''); // 팝업이 닫힐 때 iframe src를 초기화
+        });
+
+        $(window).click(function(event) {
+            if ($(event.target).is(popup)) {
+                popup.hide();
+                iframe.attr('src', ''); // 팝업이 닫힐 때 iframe src를 초기화
+            }
+        });
+    });*/
+</script>
+
 
 </body>
 </html>

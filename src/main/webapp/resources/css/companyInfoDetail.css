@@ -10,17 +10,22 @@ body {
     border-radius: 8px;
 }
 
-.company-info p, .company-parts ul, .company-filmography table {
-    margin-left: 20px;
+.title {
+    text-align: center;
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 20px;
 }
 
 h1, h2 {
     color: #333;
+    margin: 10px 0;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 10px;
 }
 
 table, th, td {
@@ -34,4 +39,34 @@ th, td {
 
 th {
     background-color: #f2f2f2;
+}
+
+.company-info-table td {
+    padding: 10px;
+}
+
+.parts-list-table td {
+    padding: 10px;
+}
+
+
+
+.back-button {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #45a049;
 }

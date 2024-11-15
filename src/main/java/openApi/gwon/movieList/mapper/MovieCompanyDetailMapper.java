@@ -3,8 +3,10 @@ package openApi.gwon.movieList.mapper;
 import openApi.gwon.movieList.dto.companyDetail.CompanyDetailsDto;
 import openApi.gwon.movieList.dto.companyDetail.FilmoDto;
 import openApi.gwon.movieList.dto.companyDetail.PartDto;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+@Mapper
 public interface MovieCompanyDetailMapper {
 
     void saveMovieDetail(CompanyDetailsDto companyDetailsDto);

@@ -69,7 +69,9 @@ public class MovieApiCallService {
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            //log.info("responseWeeklyBoxOffice = " + response.getBody());
+            log.info("callWeeklyBoxOfficeApi a = " , url);
+            log.info("responseWeeklyBoxOffice = " + response.getBody());
+
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response; // JSON 문자열 그대로 반환

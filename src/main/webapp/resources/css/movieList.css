@@ -134,6 +134,20 @@ h1 {
     background-color: #45a049;
 }
 
+.login-button {
+    padding: 10px 20px;
+    background-color: #0779e4;
+    color: white;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-button:hover{
+    background-color: #5CACEE;
+}
+
 .company-link {
     color: green; /* 원하는 색상으로 변경 */
     text-decoration: underline; /* 필요에 따라 꾸밈 */
@@ -148,4 +162,42 @@ h1 {
     flex-direction: column; /* 세로 방향으로 나열 */
 }
 
-완
+<!-- 로그인 팝업 -->
+
+.popup {
+    display: none; /* 초기 상태에서 팝업을 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.popup-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    height: 300px; /* 팝업 높이 설정 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

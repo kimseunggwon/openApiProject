@@ -223,6 +223,7 @@ public class MovieApiGetService {
 
         //ResponseEntity<DailyBoxOfficeResponse> responseDailyBoxOffice = restTemplate.getForEntity(url, DailyBoxOfficeResponse.class);
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        log.info("callDailyBoxOfficeApi a = {} " , url);
         log.info("responseDailyBoxOffice = " + response.getBody().length());
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
