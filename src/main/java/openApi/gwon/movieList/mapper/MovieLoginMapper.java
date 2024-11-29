@@ -12,4 +12,6 @@ public interface MovieLoginMapper {
     void saveMovieUser(MovieUser user);
 
     MovieUser findByUsername(String username);
+
+
 }

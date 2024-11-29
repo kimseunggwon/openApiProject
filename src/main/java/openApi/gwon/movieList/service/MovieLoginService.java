@@ -3,7 +3,6 @@ package openApi.gwon.movieList.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import openApi.gwon.movieList.dto.login.MovieUser;
-import openApi.gwon.movieList.repository.MovieListImplRepository;
 import openApi.gwon.movieList.repository.MovieLoginImplRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +23,18 @@ public class MovieLoginService {
         }
     }
 
+    public boolean isUsernameAvailable(String username){
+        MovieUser existingUser = movieLoginImplRepository.findByUsername(username);
+        return existingUser == null ;
+    }
+
     public MovieUser findByUsername(String username) {
         log.info("MovieLoginService: 사용자 검색 - {}", username);
         return movieLoginImplRepository.findByUsername(username);
+    }
+
+    public MovieUser authenticate(String username,String password) {
+
+        return null;
     }
 }

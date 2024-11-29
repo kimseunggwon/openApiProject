@@ -1,4 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -40,21 +43,43 @@
 <body>
 <div class="login-container">
     <h1>로그인</h1>
-    <form action="${pageContext.request.contextPath}/login" method="post">
+    <form action="${pageContext.request.contextPath}/login" method="post" onsubmit="return validateLoginForm()">
         <div>
-            <label for="username">Username:</label>
+            <label for="username">아이디 ID</label>
             <input type="text" id="username" name="username"/>
         </div>
         <div>
-            <label for="password">Password:</label>
+            <label for="password">비밀번호 PW</label>
             <input type="password" id="password" name="password"/>
         </div>
         <div>
-            <button type="submit">Sign in</button>
+            <button type="submit">로그인</button>
         </div>
     </form>
     <p>아직 계정이 없으신가요? <a href="${pageContext.request.contextPath}/register.do">회원가입</a></p>
 
 </div>
 </body>
+
+<script>
+    function validateLoginForm() {
+        const username = $('#username').val();
+        const password = $('#password').val();
+
+        if (!username) {
+            alert('ID를 입력해주세요.');
+            return false;
+        }
+
+        if (!password) {
+            alert('비밀번호를 입력해주세요.');
+            return false;
+        }
+
+        return true; // 모든 조건이 충족되면 true 반환
+    }
+
+
+</script>
+
 </html>
