@@ -30,6 +30,4 @@ public class MovieLoginImplRepository implements MovieLoginRepository{
         return movieLoginMapper.findByUsername(username);
     }
 
-
-
 }

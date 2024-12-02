@@ -5,16 +5,6 @@
 
 <mapper namespace="openApi.gwon.movieList.mapper.MovieLoginMapper">
 
-    <insert id="saveMovieUser" parameterType="openApi.gwon.movieList.dto.login.MovieUser" useGeneratedKeys="true" keyProperty="userid">
-        INSERT INTO MOVIEUSERS (USERNAME, PASSWORD, NAME, EMAIL, BIRTHDATE, PHONE, ENABLED)
-        VALUES (#{username}, #{password}, #{name}, #{email}, #{birthdate}, #{phone}, #{enabled})
-    </insert>
-
-    <select id="findByUsername" parameterType="string" resultType="openApi.gwon.movieList.dto.login.MovieUser">
-        SELECT USERID, USERNAME, PASSWORD, NAME, EMAIL, BIRTHDATE, PHONE, ENABLED
-        FROM MOVIEUSERS
-        WHERE USERNAME = #{username}
-    </select>
     <resultMap id="MovieResultMap" type="openApi.gwon.movieList.dto.login.MovieUser">
         <id property="userid" column="USERID"/>
         <result property="username" column="USERNAME"/>
@@ -25,5 +15,17 @@
         <result property="phone" column="PHONE"/>
         <result property="enabled" column="ENABLED"/>
     </resultMap>
+
+    <insert id="saveMovieUser" parameterType="openApi.gwon.movieList.dto.login.MovieUser" useGeneratedKeys="true" keyProperty="userid">
+        INSERT INTO MOVIEUSERS (USERNAME, PASSWORD, NAME, EMAIL, BIRTHDATE, PHONE, ENABLED)
+        VALUES (#{username}, #{password}, #{name}, #{email}, #{birthdate}, #{phone}, #{enabled})
+    </insert>
+
+    <select id="findByUsername" parameterType="string" resultType="openApi.gwon.movieList.dto.login.MovieUser">
+        SELECT USERID, USERNAME, PASSWORD, NAME, EMAIL, BIRTHDATE, PHONE, ENABLED
+        FROM MOVIEUSERS
+        WHERE USERNAME = #{username}
+    </select>
+
 
 </mapper>
