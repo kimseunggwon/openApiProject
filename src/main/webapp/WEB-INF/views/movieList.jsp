@@ -13,9 +13,9 @@
 
 <div class="header-container">
     <h1 class="title">영화정보</h1>
-    <%--<a id="box-office-button" class="box-office-button" href="http://localhost:8080/main/boxOfficeList.do">박스오피스 보러가기</a>--%>
     <a id="box-office-button" class="box-office-button" href="${pageContext.request.contextPath}/main/boxOfficeList.do">박스오피스 보러가기</a>
-    <a id="login-button" class="login-button" href="${pageContext.request.contextPath}/login.do">로그인</a>
+    <%--<a id="login-button" class="login-button" href="${pageContext.request.contextPath}/login.do">로그인</a>--%>
+    <a id="logout-button" class="logout-button" href="${pageContext.request.contextPath}/logout.do">로그아웃</a>
 </div>
 
 <div class="container">

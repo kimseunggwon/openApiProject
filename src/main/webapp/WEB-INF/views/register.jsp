@@ -84,13 +84,15 @@
         </div>
         <div>
             <%-- todo : Spring Security PasswordEncoder 사용해서 pw를 암호화 해서 저장하는게 좋다 --%>
-            <%-- todo : PW 재입력 창 --%>
-            <%-- todo : 입력 데이터 검증을 클라이언트뿐만 아니라 ,서버에서도 검증 처리. --%>
-            <%-- todo : 회원가입 도중 발생할 수 있는 예외처리. --%>
             <%-- todo : 회원가입 폼에서 CSRF 토큰을 사용하여 CSRF(Cross-Site Request Forgery) 공격을 방지. --%>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required/>
             <p class="password-info">* 비밀번호 숫자 및 문자 포함, 6자리 이상이어야 합니다.</p>
+        </div>
+        <div>
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required/>
+            <p class="password-info">* 비밀번호를 다시 입력해주세요.</p>
         </div>
         <div>
             <label for="name">Name:</label>
@@ -147,6 +149,7 @@
         // 가입하기 버튼 클릭 시 최종 확인
         const username = $('#username').val();
         const password = $('#password').val();
+        const confirmPassword = $('#confirmPassword').val();
         const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
         if (!isUsernameAvailable) {
@@ -154,6 +157,9 @@
             return false; // 폼 제출 막기
         } else if (!passwordPattern.test(password)) {
             alert('비밀번호는 최소 6자리이며, 숫자와 문자가 포함되어야 합니다.');
+            return false; // 폼 제출 막기
+        } else if (password !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다. 다시 입력해주세요.');
             return false; // 폼 제출 막기
         } else {
             alert('회원가입이 완료되었습니다.');

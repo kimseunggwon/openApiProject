@@ -121,6 +121,7 @@
     <h3>ID 찾기</h3>
     <form action="${pageContext.request.contextPath}/findId.do" method="post">
         <label for="email">가입한 이메일 주소:</label>
+        <br><br>
         <input type="email" id="email" name="email" required/>
         <button type="submit">ID 찾기</button>
     </form>
@@ -134,6 +135,7 @@
         <label for="username">ID:</label>
         <input type="text" id="usernameForPw" name="username" required/>
         <label for="email">가입한 이메일 주소:</label>
+        <br><br>
         <input type="email" id="emailForPw" name="email" required/>
         <button type="submit">PW 찾기</button>
     </form>
