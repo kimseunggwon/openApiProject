@@ -105,7 +105,7 @@
             <input type="password" id="password" name="password"/>
         </div>
         <div>
-            <button type="submit">로그인</button>
+            <button type="submit" id="loginButton">로그인</button>
         </div>
     </form>
     <p>아직 계정이 없으신가요? <a href="${pageContext.request.contextPath}/register.do">회원가입</a></p>
@@ -164,12 +164,13 @@
     }
 
     // 서버에서 전달된 로그인 오류 메시지 처리
-    <c:if test="${not empty error}">
-    $(document).ready(function() {
-        alert("${error}");
+    $(document).ready(function (){
+        const error = "${error}"; //서버에서 전달된 오류 메시지 값
 
+        if (error && error !== "null"){
+            alert(error);
+        }
     });
-    </c:if>
 
     function openPopup(popupId) {
         $('#' + popupId).show();
