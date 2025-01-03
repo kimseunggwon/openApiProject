@@ -120,29 +120,36 @@
 <div id="findIdPopup" class="popup">
     <h3>ID 찾기</h3>
     <form action="${pageContext.request.contextPath}/findId.do" method="post">
-        <label for="email">가입한 이메일 주소:</label>
-        <br><br>
-        <input type="email" id="email" name="email" required/>
-        <button type="submit">ID 찾기</button>
+        <div class="form-group">
+            <label for="username">이름:</label>
+            <input type="text" name="name" id="id_name" placeholder="이름" required>
+        </div>
+        <div class="form-group">
+            <label for="username">이메일:</label>
+            <input type="text" name="email" id="id_email" placeholder="이메일" required>
+        </div>
+        <button type="submit" id="id-find" onclick="findSubmit(); return false;">아이디 찾기</button>
     </form>
     <button onclick="closePopup('findIdPopup')">닫기</button>
 </div>
+
 
 <!-- PW 찾기 팝업 -->
 <div id="findPwPopup" class="popup">
     <h3>PW 찾기</h3>
     <form action="${pageContext.request.contextPath}/findPw.do" method="post">
-        <label for="username">ID:</label>
-        <input type="text" id="usernameForPw" name="username" required/>
-        <label for="email">가입한 이메일 주소:</label>
-        <br><br>
-        <input type="email" id="emailForPw" name="email" required/>
+        <div class="form-group">
+            <label for="username">ID:</label>
+            <input type="text" name="name" id="pw_name" placeholder="이름">
+        </div>
+        <div class="form-group">
+            <label for="username">Email:</label>
+            <input type="text" name="email" id="pw_email" placeholder="이메일">
+        </div>
         <button type="submit">PW 찾기</button>
     </form>
     <button onclick="closePopup('findPwPopup')">닫기</button>
 </div>
-
-<!-- 배경 어두운 오버레이 -->
 
 
 </body>
@@ -166,10 +173,10 @@
     }
 
     // 서버에서 전달된 로그인 오류 메시지 처리
-    $(document).ready(function (){
+    $(document).ready(function () {
         const error = "${error}"; //서버에서 전달된 오류 메시지 값
 
-        if (error && error !== "null"){
+        if (error && error !== "null") {
             alert(error);
         }
     });
@@ -183,7 +190,6 @@
         $('#' + popupId).hide();
         $('#overlay').hide();
     }
-
 
 </script>
 

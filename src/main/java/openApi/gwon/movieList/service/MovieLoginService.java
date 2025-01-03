@@ -2,6 +2,7 @@ package openApi.gwon.movieList.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import openApi.gwon.movieList.cmmn.PasswordUtils;
 import openApi.gwon.movieList.dto.login.MovieUser;
 import openApi.gwon.movieList.repository.MovieLoginImplRepository;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,8 @@ public class MovieLoginService {
     private final MovieLoginImplRepository movieLoginImplRepository;
 
 
-    /** 회원가입
+    /**
+     * 회원가입
      */
     public void save(MovieUser user) {
         try {
@@ -27,11 +29,12 @@ public class MovieLoginService {
         }
     }
 
-    /** 회원가입시 아이디 중복 유효성 검사
+    /**
+     * 회원가입시 아이디 중복 유효성 검사
      */
-    public boolean isUsernameAvailable(String username){
+    public boolean isUsernameAvailable(String username) {
         MovieUser existingUser = movieLoginImplRepository.findByUsername(username);
-        return existingUser == null ;
+        return existingUser == null;
     }
 
     // ID 찾기
@@ -41,18 +44,26 @@ public class MovieLoginService {
         return movieLoginImplRepository.findByUsername(username);
     }
 
-    /** 로그인
+    /**
+     * 로그인
      */
-    public MovieUser authenticate(String username,String password) {
-        log.info("MovieLoginService : 로그인 시도 - {}" , username);
+    public MovieUser authenticate(String username, String password) {
+        log.info("MovieLoginService : 로그인 시도 - {}", username);
+
+        // 데이터베이스에서 사용자 정보 가져오기
         MovieUser user = movieLoginImplRepository.findByUsername(username);
 
-        if (user != null && user.getPassword().equals(password)){
-            log.info("MovieLoginService: 로그인 성공 - {}", username);
-            return user;
+        if (user != null) {
+            // 입력받은 pw를 해시화하여 비교
+            String hashedPassword = PasswordUtils.hashPassword(password);
+            if (hashedPassword.equals(user.getPassword())) {
+                log.info("MovieLoginService: 로그인 성공 - {}", username);
+                return user;
+            }
         }
-
-        log.info("MovieLoginService: 로그인 실패 - {}", username);
+        log.info("MovieLoginService : 로그인 실패 - {}",username);
         return null;
     }
+
+
 }
