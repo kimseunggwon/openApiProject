@@ -7,6 +7,9 @@ import openApi.gwon.movieList.dto.login.MovieUser;
 import openApi.gwon.movieList.repository.MovieLoginImplRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,13 +40,6 @@ public class MovieLoginService {
         return existingUser == null;
     }
 
-    // ID 찾기
-    // todo : pw 찾기도 필요
-    public MovieUser findByUsername(String username) {
-        log.info("MovieLoginService: 사용자 검색 - {}", username);
-        return movieLoginImplRepository.findByUsername(username);
-    }
-
     /**
      * 로그인
      */
@@ -62,6 +58,27 @@ public class MovieLoginService {
             }
         }
         log.info("MovieLoginService : 로그인 실패 - {}",username);
+        return null;
+    }
+
+    /**
+     *  ID 찾기 로직
+     */
+    public String findUsernameByNameAndEmail(String name,String email) {
+
+        Map<String,Object> params = new HashMap<>();
+        params.put("name",name);
+        params.put("email",email);
+
+        // db에서 사용자 조회
+        MovieUser user = movieLoginImplRepository.findByNameAndEmail(params);
+
+        if (user != null) {
+            log.info("MovieLoginService: ID 찾기 성공 - ID: {}", user.getUsername());
+            return user.getUsername();
+        }
+
+        log.info("MovieLoginService: ID 찾기 실패 - 이름: {}, 이메일: {}", name, email);
         return null;
     }
 

@@ -7,6 +7,8 @@ import openApi.gwon.movieList.dto.login.MovieUser;
 import openApi.gwon.movieList.mapper.MovieLoginMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 @Repository
 @RequiredArgsConstructor
 @Slf4j
@@ -30,4 +32,8 @@ public class MovieLoginImplRepository implements MovieLoginRepository{
         return movieLoginMapper.findByUsername(username);
     }
 
+    @Override
+    public MovieUser findByNameAndEmail(Map<String, Object> params) {
+        return movieLoginMapper.findByNameAndEmail(params);
+    }
 }

@@ -119,18 +119,36 @@
 <!-- ID 찾기 팝업 -->
 <div id="findIdPopup" class="popup">
     <h3>ID 찾기</h3>
-    <form action="${pageContext.request.contextPath}/findId.do" method="post">
+    <form action="${pageContext.request.contextPath}/findId.do" method="post" onsubmit="return validateFindIdForm()">
         <div class="form-group">
             <label for="username">이름:</label>
-            <input type="text" name="name" id="id_name" placeholder="이름" required>
+            <input type="text" name="id_name" id="id_name" placeholder="이름">
         </div>
         <div class="form-group">
             <label for="username">이메일:</label>
-            <input type="text" name="email" id="id_email" placeholder="이메일" required>
+            <input type="text" name="id_email" id="id_email" placeholder="이메일">
         </div>
-        <button type="submit" id="id-find" onclick="findSubmit(); return false;">아이디 찾기</button>
+        <button type="submit">아이디 찾기</button>
     </form>
     <button onclick="closePopup('findIdPopup')">닫기</button>
+</div>
+
+
+<div id="idFindSuccessPopup" class="popup" style="display: none;">
+    <h3>회원님의 아이디는 다음과 같습니다:</h3>
+    <p><strong>${username}</strong></p>
+    <div class="form-group">
+    <button onclick="window.location.href='${pageContext.request.contextPath}/login.do'">로그인하기</button>
+    <button onclick="openPopup('findPwPopup')">비밀번호 찾기</button>
+    </div>
+</div>
+
+<div id="idFindFailPopup" class="popup" style="display: none;">
+    <h3>회원님의 정보를 찾을 수 없습니다.</h3>
+    <div class="form-group">
+    <button onclick="window.location.href='${pageContext.request.contextPath}/register.do'">회원가입</button>
+    <button onclick="window.location.href='${pageContext.request.contextPath}/login.do'">로그인하기</button>
+    </div>
 </div>
 
 
@@ -140,11 +158,11 @@
     <form action="${pageContext.request.contextPath}/findPw.do" method="post">
         <div class="form-group">
             <label for="username">ID:</label>
-            <input type="text" name="name" id="pw_name" placeholder="이름">
+            <input type="text" name="pw_name" id="pw_name" placeholder="이름">
         </div>
         <div class="form-group">
             <label for="username">Email:</label>
-            <input type="text" name="email" id="pw_email" placeholder="이메일">
+            <input type="text" name="pw_email" id="pw_email" placeholder="이메일">
         </div>
         <button type="submit">PW 찾기</button>
     </form>
@@ -155,6 +173,21 @@
 </body>
 
 <script>
+
+    $(document).ready(function (){
+        const idFindResult = "${idFindResult}";
+        if (idFindResult === "success") {
+            $('#idFindSuccessPopup').show();
+        } else if (idFindResult === "fail"){
+            $('#idFindFailPopup').show();
+        }
+    })
+
+</script>
+
+<script>
+
+    // 로그인 검증
     function validateLoginForm() {
         const username = $('#username').val();
         const password = $('#password').val();
@@ -190,6 +223,33 @@
         $('#' + popupId).hide();
         $('#overlay').hide();
     }
+
+
+    // ID 찾기 검증
+    function validateFindIdForm() {
+        const name = document.getElementById('id_name').value.trim();
+        const email = document.getElementById('id_email').value.trim();
+
+        if (!name){
+            alert("이름을 입력해주세요.");
+            return false;
+        }
+
+        if (!email){
+            alert("이메일을 입력해주세요.");
+            return false;
+        }
+
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if(!emailPattern.test(email)) {
+            alert("올바른 이메일 형식을 입력해주세요.");
+            return false;
+        }
+
+        return true;
+
+    }
+
 
 </script>
 

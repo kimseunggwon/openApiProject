@@ -27,5 +27,11 @@
         WHERE USERNAME = #{username}
     </select>
 
+    <select id="findByNameAndEmail" parameterType="map" resultType="openApi.gwon.movieList.dto.login.MovieUser">
+        SELECT USERID, USERNAME, PASSWORD, NAME, EMAIL, BIRTHDATE, PHONE, ENABLED
+        FROM MOVIEUSERS
+        WHERE NAME = #{name} AND EMAIL = #{email}
+    </select>
+
 
 </mapper>

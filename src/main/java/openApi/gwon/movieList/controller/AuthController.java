@@ -145,11 +145,23 @@ public class AuthController {
      * ID 찾기 처리
      */
     @PostMapping("/findId.do")
-    public String handleFindId(@RequestParam String email, Model model) {
+    public String handleFindId(@RequestParam String id_name,@RequestParam String id_email ,Model model) {
+        log.info("ID 찾기 요청 = {}" , id_name + id_email);
 
-        // todo 로직
+        //서비스 호출하여 사용자 조회
+        String username = movieLoginService.findUsernameByNameAndEmail(id_name,id_email);
 
-        return "login";
+        if(username == null){
+            log.warn("ID 찾기 실패 - 이름 : {}, 이메일 : {}", id_name,id_email );
+            model.addAttribute("idFindResult","fail");
+            //model.addAttribute("error", "회원님의 정보를 찾을 수 없습니다.");
+            return "login"; // 로그인 화면 이동
+        }
+
+        log.info("ID 찾기 성공 - 이름: {}, 이메일: {}, ID: {}", id_name, id_email, username);
+        model.addAttribute("idFindResult","success");
+        model.addAttribute("username", username);
+        return "login"; // 로그인 화면 이동
     }
 
     /**
