@@ -133,47 +133,179 @@
     <button onclick="closePopup('findIdPopup')">닫기</button>
 </div>
 
-
+<!-- ID 찾기 성공 팝업 -->
 <div id="idFindSuccessPopup" class="popup" style="display: none;">
     <h3>회원님의 아이디는 다음과 같습니다:</h3>
     <p><strong>${username}</strong></p>
     <div class="form-group">
-    <button onclick="window.location.href='${pageContext.request.contextPath}/login.do'">로그인하기</button>
-    <button onclick="openPopup('findPwPopup')">비밀번호 찾기</button>
+        <button onclick="window.location.href='${pageContext.request.contextPath}/login.do'">로그인하기</button>
+        <button onclick="openPopup('findPwPopup')">비밀번호 찾기</button>
     </div>
 </div>
 
 <div id="idFindFailPopup" class="popup" style="display: none;">
     <h3>회원님의 정보를 찾을 수 없습니다.</h3>
     <div class="form-group">
-    <button onclick="window.location.href='${pageContext.request.contextPath}/register.do'">회원가입</button>
-    <button onclick="window.location.href='${pageContext.request.contextPath}/login.do'">로그인하기</button>
+        <button onclick="window.location.href='${pageContext.request.contextPath}/register.do'">회원가입</button>
+        <button onclick="window.location.href='${pageContext.request.contextPath}/login.do'">로그인하기</button>
     </div>
 </div>
+
 
 
 <!-- PW 찾기 팝업 -->
 <div id="findPwPopup" class="popup">
     <h3>PW 찾기</h3>
-    <form action="${pageContext.request.contextPath}/findPw.do" method="post">
+    <form>
         <div class="form-group">
-            <label for="username">ID:</label>
-            <input type="text" name="pw_name" id="pw_name" placeholder="이름">
+            <label>아이디:</label>
+            <input type="text" name="pw_id" id="pw_id" placeholder="아이디">
         </div>
         <div class="form-group">
-            <label for="username">Email:</label>
+            <label>이메일:</label>
             <input type="text" name="pw_email" id="pw_email" placeholder="이메일">
         </div>
-        <button type="submit">PW 찾기</button>
+
+        <button type="button" id="emailVerificationButton" onclick="sendEmailVerification()">이메일 인증</button>
+
+        <div class="form-group" id="verificationCodeField" style="display: none;">
+            <label>이메일 인증 코드:</label>
+            <input type="text" id="verificationCode" placeholder="인증 코드">
+        </div>
+        <button type="button" id="verifyCodeButton" style="display: none;" onclick="verifyCode()">인증 확인</button>
     </form>
     <button onclick="closePopup('findPwPopup')">닫기</button>
 </div>
 
 
+<!-- PW 찾기 성공 팝업 -->
+<div id="pwFindSuccessPopup" class="popup" style="display: none;">
+    <h3>비밀번호 변경</h3>
+    <form id="restPwForm" onsubmit="return resetPassword()">
+        <div class="form-group">
+            <label>새 비밀번호:</label>
+            <input type="password" id="newPassword" placeholder="새 비밀번호">
+        </div>
+        <div class="form-group">
+            <label>새 비밀번호 확인:</label>
+            <input type="password" id="confirmPassword" placeholder="비밀번호 확인">
+        </div>
+        <button type="submit">비밀번호 변경</button>
+    </form>
+</div>
 </body>
 
 <script>
 
+    // PW 찾기 검증 시작
+
+    // 이메일 인증 전송
+    function sendEmailVerification() {
+
+        const pwId = $('#pw_id').val().trim();
+        const pwEmail = $('#pw_email').val().trim();
+
+        if (!pwId || !pwEmail){
+            alert("아이디와 이메일을 입력해주세요.");
+            return;
+        }
+
+        $.ajax({
+            url : '/findPw.do',
+            type: 'POST',
+            data: {
+                pw_id :pwId,
+                pw_email : pwEmail
+            },
+            success: function (response) {
+                if (response.success){
+                    alert("인증 코드가 이메일로 전송되었습니다.")
+                    $('#verificationCodeField').show();
+                    $('#verifyCodeButton').show();
+                } else {
+                    alert(response.message);
+                    //closePopup('findPwPopup'); // 실패 시 팝업 닫기
+                }
+            },
+            error : function () {
+                alert("오류가 발생했습니다.")
+            }
+        });
+    }
+
+    // 인증 코드 확인
+    function verifyCode() {
+        const verificationCode = $('#verificationCode').val().trim();
+        const pwEmail = $('#pw_email').val().trim();
+
+        if(!verificationCode) {
+            alert("인증 코드를 입력해주세요.");
+            return;
+        }
+
+        $.ajax({
+            url : '/verifyCode',
+            type : 'POST',
+            data : {
+                verificationCode : verificationCode,
+                email : pwEmail
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert("인증이 완료되었습니다.");
+                    closePopup('findPwPopup');
+                    $('#pwFindSuccessPopup').show();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error:function (){
+                alert("오류가 발생했습니다.");
+            }
+        });
+    }
+
+    //비밀번호 변경
+    function resetPassword() {
+        const newPassword = $('#newPassword').val().trim();
+        const confirmPassword = $('#confirmPassword').val().trim();
+
+        if (!newPassword || !confirmPassword){
+            alert("비밀번호 확인을 입력해주세요.");
+            return false;
+        }
+
+        if (newPassword !== confirmPassword){
+            alert("비밀먼호가 일치하지 않습니다.");
+            return false;
+        }
+
+        $.ajax({
+            url : '/resetPassword',
+            type : 'POST',
+            data : {newPassword},
+            success : function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    closePopup('pwFindSuccessPopup');
+                    //window.location.href = "/login.do"; // 비밀번호 변경 후 로그인 페이지로 이동 // 팝업 닫히면 로그인 페이지
+                } else {
+                    alert(response.message);
+                }
+            },
+            error : function (){
+                alert("비밀번호 변경 중 오류가 발생했습니다.");
+            }
+        });
+        return false;
+    }
+
+
+</script>
+
+<script>
+
+    // ID 찾기 및 ID 검증
     $(document).ready(function (){
         const idFindResult = "${idFindResult}";
         if (idFindResult === "success") {
@@ -182,10 +314,6 @@
             $('#idFindFailPopup').show();
         }
     })
-
-</script>
-
-<script>
 
     // 로그인 검증
     function validateLoginForm() {
@@ -249,7 +377,6 @@
         return true;
 
     }
-
 
 </script>
 

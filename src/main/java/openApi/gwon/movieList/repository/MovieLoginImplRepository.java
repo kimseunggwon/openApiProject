@@ -36,4 +36,14 @@ public class MovieLoginImplRepository implements MovieLoginRepository{
     public MovieUser findByNameAndEmail(Map<String, Object> params) {
         return movieLoginMapper.findByNameAndEmail(params);
     }
+
+    @Override
+    public int updatePassword(Map<String, Object> params) {
+        return movieLoginMapper.updatePassword(params);
+    }
+
+    @Override
+    public MovieUser findByUsernameOrEmail(Map<String, Object> params) {
+        return movieLoginMapper.findByUsernameOrEmail(params);
+    }
 }

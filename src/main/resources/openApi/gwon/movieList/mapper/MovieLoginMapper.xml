@@ -34,4 +34,20 @@
     </select>
 
 
+    <select id="findByUsernameOrEmail" parameterType="map" resultType="openApi.gwon.movieList.dto.login.MovieUser">
+        SELECT USERID, USERNAME, PASSWORD, NAME, EMAIL, BIRTHDATE, PHONE, ENABLED
+        FROM MOVIEUSERS
+        WHERE (USERNAME = #{username} AND EMAIL = #{email})
+    </select>
+
+    <update id="updatePassword" parameterType="map" >
+        UPDATE MOVIEUSERS
+        SET PASSWORD = #{password}
+        WHERE USERNAME = #{username}
+    </update>
+
+
+
+
+
 </mapper>

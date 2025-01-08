@@ -82,5 +82,32 @@ public class MovieLoginService {
         return null;
     }
 
+    /** PW 찾기
+     *  ID 와 이메일 존재 여부 확인
+     */
+    public boolean verifyUserByIdAndEmail(String username,String email) {
+        Map<String,Object> params = new HashMap<>();
+        params.put("username",username);
+        params.put("email",email);
+
+        MovieUser user = movieLoginImplRepository.findByUsernameOrEmail(params);
+        log.info("ID 와 이메일 존재 여부 user = {} ", user);
+        return user != null;
+    }
+
+    /** PW 찾기
+     *  비밀번호 업데이트
+     */
+    public boolean updatePassword(String username,String newPassword) {
+        String hashedPassword = PasswordUtils.hashPassword(newPassword); // 비밀번호 해싱
+        Map<String, Object> params = new HashMap<>();
+        params.put("username", username);
+        params.put("password", hashedPassword);
+
+        return movieLoginImplRepository.updatePassword(params) > 0;
+    }
+
+
+
 
 }

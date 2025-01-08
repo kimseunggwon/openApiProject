@@ -60,6 +60,16 @@ dependencies {
 	// JWT 사용을 위한 라이브러리
 	implementation 'com.nimbusds:nimbus-jose-jwt:9.15'
 
+	// 이메일 전송
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-mail'
+	}
+
+	// HTTP 클라이언트
+	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+
+
 }
 
 tasks.named('test') {

@@ -17,7 +17,10 @@ public interface MovieLoginMapper {
 
     MovieUser findByNameAndEmail(Map<String,Object> params);
 
-    // todo 질문 : 기존에 구현되어잇는 쿼리에 추가를 해서 findByNameAndEmail 대신에 구현을 하면 안되나?
+    int updatePassword(Map<String,Object> params);
+
+    MovieUser findByUsernameOrEmail(Map<String,Object> params);
+
 
 
 }
